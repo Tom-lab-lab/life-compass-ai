@@ -14,7 +14,278 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      activity_logs: {
+        Row: {
+          category: string | null
+          created_at: string
+          id: string
+          log_type: string
+          logged_at: string
+          metadata: Json | null
+          user_id: string
+          value: number
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          log_type: string
+          logged_at?: string
+          metadata?: Json | null
+          user_id: string
+          value?: number
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          log_type?: string
+          logged_at?: string
+          metadata?: Json | null
+          user_id?: string
+          value?: number
+        }
+        Relationships: []
+      }
+      coaching_plans: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      daily_tasks: {
+        Row: {
+          category: string
+          completed_at: string | null
+          created_at: string
+          day_number: number
+          id: string
+          is_completed: boolean
+          plan_id: string | null
+          task: string
+          user_id: string
+        }
+        Insert: {
+          category?: string
+          completed_at?: string | null
+          created_at?: string
+          day_number: number
+          id?: string
+          is_completed?: boolean
+          plan_id?: string | null
+          task: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          completed_at?: string | null
+          created_at?: string
+          day_number?: number
+          id?: string
+          is_completed?: boolean
+          plan_id?: string | null
+          task?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "daily_tasks_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "coaching_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      goals: {
+        Row: {
+          category: string
+          created_at: string
+          current_value: string | null
+          id: string
+          progress: number
+          status: string
+          target_value: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          current_value?: string | null
+          id?: string
+          progress?: number
+          status?: string
+          target_value?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          current_value?: string | null
+          id?: string
+          progress?: number
+          status?: string
+          target_value?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      interventions: {
+        Row: {
+          created_at: string
+          id: string
+          impact_score: number
+          name: string
+          times_accepted: number
+          times_shown: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          impact_score?: number
+          name: string
+          times_accepted?: number
+          times_shown?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          impact_score?: number
+          name?: string
+          times_accepted?: number
+          times_shown?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      life_scores: {
+        Row: {
+          created_at: string
+          date: string
+          digital: number
+          financial: number
+          id: string
+          overall: number
+          physical: number
+          productivity: number
+          user_id: string
+          wellbeing: number
+        }
+        Insert: {
+          created_at?: string
+          date?: string
+          digital?: number
+          financial?: number
+          id?: string
+          overall?: number
+          physical?: number
+          productivity?: number
+          user_id: string
+          wellbeing?: number
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          digital?: number
+          financial?: number
+          id?: string
+          overall?: number
+          physical?: number
+          productivity?: number
+          user_id?: string
+          wellbeing?: number
+        }
+        Relationships: []
+      }
+      nudges: {
+        Row: {
+          created_at: string
+          id: string
+          is_read: boolean
+          message: string
+          nudge_type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message: string
+          nudge_type?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message?: string
+          nudge_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          timezone: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id: string
+          timezone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          timezone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
