@@ -85,7 +85,7 @@ const DashboardContent = ({ activeSection, onNavigate }: { activeSection: string
             <SpendingBreakdown logs={data.spendingLogs} />
 
             <div className="xl:col-span-2">
-              <BehavioralHeatmap />
+              <BehavioralHeatmap logs={data.screenTimeLogs} />
             </div>
             <InterventionReport interventions={data.interventions} />
           </div>

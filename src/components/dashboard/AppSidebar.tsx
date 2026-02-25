@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/useAuth";
 import {
   LayoutDashboard,
   Brain,
@@ -11,6 +12,7 @@ import {
   Sparkles,
   ChevronLeft,
   ChevronRight,
+  LogOut,
 } from "lucide-react";
 
 const navItems = [
@@ -30,6 +32,7 @@ interface AppSidebarProps {
 
 const AppSidebar = ({ activeSection, onNavigate }: AppSidebarProps) => {
   const [collapsed, setCollapsed] = useState(false);
+  const { signOut } = useAuth();
 
   return (
     <aside
@@ -69,8 +72,15 @@ const AppSidebar = ({ activeSection, onNavigate }: AppSidebarProps) => {
         ))}
       </nav>
 
-      {/* Collapse toggle */}
-      <div className="border-t border-border p-3">
+      {/* Sign out + collapse */}
+      <div className="border-t border-border p-3 space-y-1">
+        <button
+          onClick={signOut}
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
+        >
+          <LogOut className="h-4 w-4 shrink-0" />
+          {!collapsed && <span>Sign Out</span>}
+        </button>
         <button
           onClick={() => setCollapsed(!collapsed)}
           className="flex w-full items-center justify-center rounded-lg py-2 text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground"
