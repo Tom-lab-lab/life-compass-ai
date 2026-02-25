@@ -1,4 +1,4 @@
-import { heatmapData } from "@/lib/mockData";
+import type { ActivityLog } from "@/hooks/useDashboardData";
 
 const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const hours = Array.from({ length: 24 }, (_, i) => (i < 10 ? `0${i}` : `${i}`));
@@ -11,7 +11,32 @@ const getColor = (value: number) => {
   return "bg-primary/90";
 };
 
-const BehavioralHeatmap = () => {
+interface Props {
+  logs: ActivityLog[];
+}
+
+const BehavioralHeatmap = ({ logs }: Props) => {
+  // Build heatmap from screen_time logs: group by day-of-week and hour
+  const heatmapData: { day: number; hour: number; value: number }[] = [];
+  const grid: Record<string, number> = {};
+
+  logs.forEach((l) => {
+    const d = new Date(l.logged_at);
+    const dayIdx = (d.getDay() + 6) % 7; // Mon=0
+    const hour = d.getHours();
+    const key = `${dayIdx}-${hour}`;
+    grid[key] = (grid[key] || 0) + Number(l.value);
+  });
+
+  const maxVal = Math.max(1, ...Object.values(grid));
+
+  for (let day = 0; day < 7; day++) {
+    for (let hour = 0; hour < 24; hour++) {
+      const raw = grid[`${day}-${hour}`] || 0;
+      heatmapData.push({ day, hour, value: Math.round((raw / maxVal) * 100) });
+    }
+  }
+
   return (
     <div className="rounded-xl border border-border bg-card p-6 animate-slide-up" style={{ animationDelay: "0.5s" }}>
       <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
