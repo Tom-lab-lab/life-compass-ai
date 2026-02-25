@@ -23,7 +23,6 @@ export type Profile = Tables<"profiles">;
 export const useDashboardData = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
-  const [seeding, setSeeding] = useState(false);
   const [lifeScores, setLifeScores] = useState<LifeScore[]>([]);
   const [goals, setGoals] = useState<Goal[]>([]);
   const [screenTimeLogs, setScreenTimeLogs] = useState<ActivityLog[]>([]);
@@ -50,45 +49,15 @@ export const useDashboardData = () => {
         fetchProfile(user.id),
       ]);
 
-      // If no data exists, seed demo data
-      if (scores.length === 0) {
-        setSeeding(true);
-        await supabase.functions.invoke("ai-coach", {
-          body: { action: "seed-demo-data" },
-        });
-        // Reload
-        const [s2, g2, st2, steps2, sp2, plan2, n2, inter2, prof2] = await Promise.all([
-          fetchLifeScores(user.id),
-          fetchGoals(user.id),
-          fetchActivityLogs(user.id, "screen_time"),
-          fetchActivityLogs(user.id, "steps"),
-          fetchActivityLogs(user.id, "spending"),
-          fetchActiveCoachingPlan(user.id),
-          fetchNudges(user.id),
-          fetchInterventions(user.id),
-          fetchProfile(user.id),
-        ]);
-        setLifeScores(s2);
-        setGoals(g2);
-        setScreenTimeLogs(st2);
-        setStepLogs(steps2);
-        setSpendingLogs(sp2);
-        setCoachingPlan(plan2 as CoachingPlan | null);
-        setNudges(n2);
-        setInterventions(inter2);
-        setProfile(prof2);
-        setSeeding(false);
-      } else {
-        setLifeScores(scores);
-        setGoals(g);
-        setScreenTimeLogs(st);
-        setStepLogs(steps);
-        setSpendingLogs(spending);
-        setCoachingPlan(plan as CoachingPlan | null);
-        setNudges(n);
-        setInterventions(inter);
-        setProfile(prof);
-      }
+      setLifeScores(scores);
+      setGoals(g);
+      setScreenTimeLogs(st);
+      setStepLogs(steps);
+      setSpendingLogs(spending);
+      setCoachingPlan(plan as CoachingPlan | null);
+      setNudges(n);
+      setInterventions(inter);
+      setProfile(prof);
     } catch (err) {
       console.error("Failed to load dashboard data:", err);
     } finally {
@@ -102,7 +71,6 @@ export const useDashboardData = () => {
 
   return {
     loading,
-    seeding,
     lifeScores,
     goals,
     screenTimeLogs,

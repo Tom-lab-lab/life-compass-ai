@@ -36,7 +36,10 @@ serve(async (req) => {
       const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
       if (!LOVABLE_API_KEY) throw new Error("AI service not configured");
 
-      const prompt = `You are a life improvement AI coach. Based on the user's data, create a personalized 10-day improvement plan.
+      const hasData = (scores && scores.length > 0) || (logs && logs.length > 0);
+
+      const prompt = hasData
+        ? `You are a life improvement AI coach. Based on the user's real data, create a personalized 10-day improvement plan.
 
 User's recent life scores: ${JSON.stringify(scores?.slice(0, 3) || [])}
 Active goals: ${JSON.stringify(goals || [])}
@@ -47,7 +50,15 @@ Return a JSON array of exactly 10 tasks. Each task should have:
 - task (actionable description, max 60 chars)
 - category (one of: Productivity, Digital, Physical, Financial, Wellbeing)
 
-Focus on the weakest areas. Be specific and actionable.`;
+Focus on the weakest areas shown in the data. Be specific and actionable.`
+        : `You are a life improvement AI coach. The user is just getting started and has no data yet. Create a balanced 10-day onboarding plan to help them build healthy habits.
+
+Return a JSON array of exactly 10 tasks. Each task should have:
+- day_number (1-10)
+- task (actionable description, max 60 chars)
+- category (one of: Productivity, Digital, Physical, Financial, Wellbeing)
+
+Include 2 tasks per category. Be specific and actionable for beginners.`;
 
       const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
         method: "POST",
@@ -117,7 +128,6 @@ Focus on the weakest areas. Be specific and actionable.`;
         const parsed = JSON.parse(toolCall.function.arguments);
         tasks = parsed.tasks;
       } catch {
-        // Fallback: try parsing content directly
         try {
           const content = aiData.choices?.[0]?.message?.content || "[]";
           tasks = JSON.parse(content.replace(/```json\n?|\n?```/g, ""));
@@ -173,82 +183,6 @@ Focus on the weakest areas. Be specific and actionable.`;
       });
 
       return new Response(JSON.stringify({ plan, tasks: taskRows }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    if (action === "seed-demo-data") {
-      // Seed demo data for new users
-      const today = new Date();
-
-      // Life scores for past 30 days
-      const scoreRows = Array.from({ length: 30 }, (_, i) => {
-        const d = new Date(today);
-        d.setDate(d.getDate() - (29 - i));
-        return {
-          user_id: user.id,
-          date: d.toISOString().split("T")[0],
-          overall: 55 + Math.round(Math.random() * 30 + i * 0.5),
-          productivity: 50 + Math.round(Math.random() * 35),
-          wellbeing: 45 + Math.round(Math.random() * 35),
-          financial: 50 + Math.round(Math.random() * 30),
-          physical: 45 + Math.round(Math.random() * 40),
-          digital: 40 + Math.round(Math.random() * 35),
-        };
-      }).map((s) => ({
-        ...s,
-        overall: Math.min(s.overall, 100),
-        productivity: Math.min(s.productivity, 100),
-        wellbeing: Math.min(s.wellbeing, 100),
-        financial: Math.min(s.financial, 100),
-        physical: Math.min(s.physical, 100),
-        digital: Math.min(s.digital, 100),
-      }));
-
-      await supabase.from("life_scores").upsert(scoreRows, { onConflict: "user_id,date" });
-
-      // Activity logs
-      const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-      const activityRows: any[] = [];
-      for (let i = 0; i < 7; i++) {
-        const d = new Date(today);
-        d.setDate(d.getDate() - (6 - i));
-        const dateStr = d.toISOString();
-
-        activityRows.push(
-          { user_id: user.id, log_type: "screen_time", value: 40 + Math.round(Math.random() * 80), category: "social", logged_at: dateStr },
-          { user_id: user.id, log_type: "screen_time", value: 60 + Math.round(Math.random() * 120), category: "productive", logged_at: dateStr },
-          { user_id: user.id, log_type: "screen_time", value: 20 + Math.round(Math.random() * 60), category: "entertainment", logged_at: dateStr },
-          { user_id: user.id, log_type: "steps", value: 4000 + Math.round(Math.random() * 8000), logged_at: dateStr },
-          { user_id: user.id, log_type: "spending", value: 500 + Math.round(Math.random() * 3000), category: ["Food", "Transport", "Shopping", "Bills", "Entertainment"][Math.floor(Math.random() * 5)], logged_at: dateStr },
-        );
-      }
-      await supabase.from("activity_logs").insert(activityRows);
-
-      // Goals
-      await supabase.from("goals").insert([
-        { user_id: user.id, title: "Reduce screen time to 4h/day", category: "Digital", target_value: "4h", current_value: "5.2h", progress: 65 },
-        { user_id: user.id, title: "Walk 8000 steps daily", category: "Physical", target_value: "8000", current_value: "6240", progress: 78 },
-        { user_id: user.id, title: "Save ₹5000 this month", category: "Financial", target_value: "₹5000", current_value: "₹2100", progress: 42 },
-        { user_id: user.id, title: "Complete 20 focus sessions", category: "Productivity", target_value: "20", current_value: "11", progress: 55 },
-      ]);
-
-      // Interventions
-      await supabase.from("interventions").insert([
-        { user_id: user.id, name: "Focus mode reminders", times_shown: 100, times_accepted: 82, impact_score: 12 },
-        { user_id: user.id, name: "Step goal nudges", times_shown: 100, times_accepted: 65, impact_score: 8 },
-        { user_id: user.id, name: "Spending alerts", times_shown: 100, times_accepted: 71, impact_score: 15 },
-        { user_id: user.id, name: "Sleep schedule prompts", times_shown: 100, times_accepted: 45, impact_score: 6 },
-        { user_id: user.id, name: "Break reminders", times_shown: 100, times_accepted: 78, impact_score: 10 },
-      ]);
-
-      // Welcome nudges
-      await supabase.from("nudges").insert([
-        { user_id: user.id, message: "Welcome to ULA v2! Your life dashboard is ready.", nudge_type: "success" },
-        { user_id: user.id, message: "Try generating an AI coaching plan to get started!", nudge_type: "info" },
-      ]);
-
-      return new Response(JSON.stringify({ success: true }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
