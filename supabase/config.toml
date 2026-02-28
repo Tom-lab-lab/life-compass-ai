@@ -2,3 +2,6 @@ project_id = "ntkfcttbyiuonaqjzzhn"
 
 [functions.ai-coach]
 verify_jwt = false
+
+[functions.ai-predict]
+verify_jwt = false

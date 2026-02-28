@@ -232,6 +232,63 @@ export type Database = {
         }
         Relationships: []
       }
+      model_metrics: {
+        Row: {
+          accuracy: number
+          avg_confidence: number
+          correct_predictions: number
+          created_at: string
+          domain: string
+          drift_score: number
+          feedback_helpful: number
+          feedback_total: number
+          feedback_wrong: number
+          id: string
+          period_end: string
+          period_start: string
+          total_predictions: number
+          usefulness_rate: number
+          user_id: string
+          version: number
+        }
+        Insert: {
+          accuracy?: number
+          avg_confidence?: number
+          correct_predictions?: number
+          created_at?: string
+          domain: string
+          drift_score?: number
+          feedback_helpful?: number
+          feedback_total?: number
+          feedback_wrong?: number
+          id?: string
+          period_end: string
+          period_start: string
+          total_predictions?: number
+          usefulness_rate?: number
+          user_id: string
+          version?: number
+        }
+        Update: {
+          accuracy?: number
+          avg_confidence?: number
+          correct_predictions?: number
+          created_at?: string
+          domain?: string
+          drift_score?: number
+          feedback_helpful?: number
+          feedback_total?: number
+          feedback_wrong?: number
+          id?: string
+          period_end?: string
+          period_start?: string
+          total_predictions?: number
+          usefulness_rate?: number
+          user_id?: string
+          version?: number
+        }
+        Relationships: []
+      }
       nudges: {
         Row: {
           created_at: string
@@ -255,6 +312,95 @@ export type Database = {
           is_read?: boolean
           message?: string
           nudge_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      prediction_feedback: {
+        Row: {
+          comment: string | null
+          created_at: string
+          feedback_type: string
+          id: string
+          prediction_id: string
+          user_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          feedback_type: string
+          id?: string
+          prediction_id: string
+          user_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          feedback_type?: string
+          id?: string
+          prediction_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prediction_feedback_prediction_id_fkey"
+            columns: ["prediction_id"]
+            isOneToOne: false
+            referencedRelation: "predictions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      predictions: {
+        Row: {
+          accuracy_score: number | null
+          actual_outcome: Json | null
+          confidence_score: number
+          created_at: string
+          domain: string
+          expires_at: string | null
+          id: string
+          pattern_explanation: string | null
+          predicted_outcome: Json | null
+          prediction_text: string
+          resolved_at: string | null
+          risk_score: number
+          status: string
+          trend_direction: string
+          user_id: string
+        }
+        Insert: {
+          accuracy_score?: number | null
+          actual_outcome?: Json | null
+          confidence_score?: number
+          created_at?: string
+          domain?: string
+          expires_at?: string | null
+          id?: string
+          pattern_explanation?: string | null
+          predicted_outcome?: Json | null
+          prediction_text: string
+          resolved_at?: string | null
+          risk_score?: number
+          status?: string
+          trend_direction?: string
+          user_id: string
+        }
+        Update: {
+          accuracy_score?: number | null
+          actual_outcome?: Json | null
+          confidence_score?: number
+          created_at?: string
+          domain?: string
+          expires_at?: string | null
+          id?: string
+          pattern_explanation?: string | null
+          predicted_outcome?: Json | null
+          prediction_text?: string
+          resolved_at?: string | null
+          risk_score?: number
+          status?: string
+          trend_direction?: string
           user_id?: string
         }
         Relationships: []
@@ -283,6 +429,45 @@ export type Database = {
           id?: string
           timezone?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      user_behavior_profiles: {
+        Row: {
+          created_at: string
+          detected_patterns: Json | null
+          id: string
+          sleep_pattern: Json | null
+          spending_habits: Json | null
+          stress_indicators: Json | null
+          study_schedule: Json | null
+          updated_at: string
+          user_id: string
+          work_hours: Json | null
+        }
+        Insert: {
+          created_at?: string
+          detected_patterns?: Json | null
+          id?: string
+          sleep_pattern?: Json | null
+          spending_habits?: Json | null
+          stress_indicators?: Json | null
+          study_schedule?: Json | null
+          updated_at?: string
+          user_id: string
+          work_hours?: Json | null
+        }
+        Update: {
+          created_at?: string
+          detected_patterns?: Json | null
+          id?: string
+          sleep_pattern?: Json | null
+          spending_habits?: Json | null
+          stress_indicators?: Json | null
+          study_schedule?: Json | null
+          updated_at?: string
+          user_id?: string
+          work_hours?: Json | null
         }
         Relationships: []
       }

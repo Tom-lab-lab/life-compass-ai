@@ -10,6 +10,7 @@ import {
   fetchInterventions,
   fetchProfile,
 } from "@/lib/api";
+import { fetchPredictions, fetchModelMetrics, fetchBehaviorProfile } from "@/lib/prediction-api";
 import type { Tables } from "@/integrations/supabase/types";
 
 export type LifeScore = Tables<"life_scores">;
@@ -32,12 +33,15 @@ export const useDashboardData = () => {
   const [nudges, setNudges] = useState<Nudge[]>([]);
   const [interventions, setInterventions] = useState<Intervention[]>([]);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [predictions, setPredictions] = useState<any[]>([]);
+  const [modelMetrics, setModelMetrics] = useState<any[]>([]);
+  const [behaviorProfile, setBehaviorProfile] = useState<any>(null);
 
   const loadAll = async () => {
     if (!user) return;
     setLoading(true);
     try {
-      const [scores, g, st, steps, spending, plan, n, inter, prof] = await Promise.all([
+      const [scores, g, st, steps, spending, plan, n, inter, prof, preds, metrics, bProfile] = await Promise.all([
         fetchLifeScores(user.id),
         fetchGoals(user.id),
         fetchActivityLogs(user.id, "screen_time"),
@@ -47,6 +51,9 @@ export const useDashboardData = () => {
         fetchNudges(user.id),
         fetchInterventions(user.id),
         fetchProfile(user.id),
+        fetchPredictions(user.id),
+        fetchModelMetrics(user.id),
+        fetchBehaviorProfile(user.id),
       ]);
 
       setLifeScores(scores);
@@ -58,6 +65,9 @@ export const useDashboardData = () => {
       setNudges(n);
       setInterventions(inter);
       setProfile(prof);
+      setPredictions(preds);
+      setModelMetrics(metrics);
+      setBehaviorProfile(bProfile);
     } catch (err) {
       console.error("Failed to load dashboard data:", err);
     } finally {
@@ -80,6 +90,9 @@ export const useDashboardData = () => {
     nudges,
     interventions,
     profile,
+    predictions,
+    modelMetrics,
+    behaviorProfile,
     refresh: loadAll,
   };
 };
