@@ -20,8 +20,9 @@ const navItems = [
   { icon: Brain, label: "AI Coach", id: "coach" },
   { icon: Target, label: "Goals", id: "goals" },
   { icon: Activity, label: "Activity", id: "activity" },
-  { icon: BarChart3, label: "Analytics", id: "analytics" },
-  { icon: Shield, label: "Safety", id: "safety" },
+  { icon: BarChart3, label: "Predictions", id: "predictions" },
+  { icon: Sparkles, label: "Explainable AI", id: "explainable" },
+  { icon: Shield, label: "Accuracy", id: "accuracy" },
   { icon: Settings, label: "Settings", id: "settings" },
 ];
 

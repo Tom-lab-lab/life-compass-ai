@@ -14,6 +14,9 @@ import GoalsPanel from "@/components/dashboard/GoalsPanel";
 import InterventionReport from "@/components/dashboard/InterventionReport";
 import BehavioralHeatmap from "@/components/dashboard/BehavioralHeatmap";
 import DataEntryModal from "@/components/dashboard/DataEntryModal";
+import PredictionEngine from "@/components/dashboard/PredictionEngine";
+import ExplainableAI from "@/components/dashboard/ExplainableAI";
+import AccuracyDashboard from "@/components/dashboard/AccuracyDashboard";
 import { Loader2, Plus } from "lucide-react";
 
 const Index = () => {
@@ -52,6 +55,77 @@ const DashboardContent = ({ activeSection, onNavigate }: { activeSection: string
   const displayName = profile?.display_name || "there";
   const hasData = data.lifeScores.length > 0 || data.screenTimeLogs.length > 0 || data.stepLogs.length > 0;
 
+  const renderSection = () => {
+    if (activeSection === "predictions") {
+      return (
+        <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+          <PredictionEngine predictions={data.predictions} onRefresh={data.refresh} />
+          <AccuracyDashboard metrics={data.modelMetrics} />
+        </div>
+      );
+    }
+
+    if (activeSection === "explainable") {
+      return (
+        <ExplainableAI
+          lifeScores={data.lifeScores}
+          screenTimeLogs={data.screenTimeLogs}
+          stepLogs={data.stepLogs}
+          spendingLogs={data.spendingLogs}
+        />
+      );
+    }
+
+    if (activeSection === "accuracy") {
+      return <AccuracyDashboard metrics={data.modelMetrics} />;
+    }
+
+    // Default overview
+    if (!hasData) {
+      return (
+        <div className="flex flex-col items-center justify-center py-20">
+          <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-muted">
+            <Plus className="h-8 w-8 text-muted-foreground" />
+          </div>
+          <h2 className="mb-2 text-xl font-bold text-foreground">Welcome to ULA v2!</h2>
+          <p className="mb-6 max-w-md text-center text-sm text-muted-foreground">
+            Start by logging your first data — screen time, steps, spending, or your life score. Your dashboard will populate as you track your daily habits.
+          </p>
+          <button
+            onClick={() => setShowEntry(true)}
+            className="flex items-center gap-2 rounded-lg bg-gradient-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+          >
+            <Plus className="h-4 w-4" />
+            Log Your First Entry
+          </button>
+        </div>
+      );
+    }
+
+    return (
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
+        <div className="xl:col-span-2">
+          <LifeScoreRing scores={data.lifeScores} />
+        </div>
+        <NudgeFeed nudges={data.nudges} />
+
+        <PredictionEngine predictions={data.predictions} onRefresh={data.refresh} />
+        <ProductivityForecast scores={data.lifeScores} />
+        <CoachingRoadmap plan={data.coachingPlan} onRefresh={data.refresh} />
+
+        <GoalsPanel goals={data.goals} onRefresh={data.refresh} />
+        <ScreenTimeChart logs={data.screenTimeLogs} />
+        <ActivityTracker logs={data.stepLogs} />
+
+        <SpendingBreakdown logs={data.spendingLogs} />
+        <div className="xl:col-span-2">
+          <BehavioralHeatmap logs={data.screenTimeLogs} />
+        </div>
+        <InterventionReport interventions={data.interventions} />
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <AppSidebar activeSection={activeSection} onNavigate={onNavigate} />
@@ -79,46 +153,7 @@ const DashboardContent = ({ activeSection, onNavigate }: { activeSection: string
           </div>
         </header>
 
-        <div className="p-8">
-          {!hasData ? (
-            <div className="flex flex-col items-center justify-center py-20">
-              <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-muted">
-                <Plus className="h-8 w-8 text-muted-foreground" />
-              </div>
-              <h2 className="mb-2 text-xl font-bold text-foreground">Welcome to ULA v2!</h2>
-              <p className="mb-6 max-w-md text-center text-sm text-muted-foreground">
-                Start by logging your first data — screen time, steps, spending, or your life score. Your dashboard will populate as you track your daily habits.
-              </p>
-              <button
-                onClick={() => setShowEntry(true)}
-                className="flex items-center gap-2 rounded-lg bg-gradient-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
-              >
-                <Plus className="h-4 w-4" />
-                Log Your First Entry
-              </button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
-              <div className="xl:col-span-2">
-                <LifeScoreRing scores={data.lifeScores} />
-              </div>
-              <NudgeFeed nudges={data.nudges} />
-
-              <ProductivityForecast scores={data.lifeScores} />
-              <CoachingRoadmap plan={data.coachingPlan} onRefresh={data.refresh} />
-              <GoalsPanel goals={data.goals} onRefresh={data.refresh} />
-
-              <ScreenTimeChart logs={data.screenTimeLogs} />
-              <ActivityTracker logs={data.stepLogs} />
-              <SpendingBreakdown logs={data.spendingLogs} />
-
-              <div className="xl:col-span-2">
-                <BehavioralHeatmap logs={data.screenTimeLogs} />
-              </div>
-              <InterventionReport interventions={data.interventions} />
-            </div>
-          )}
-        </div>
+        <div className="p-8">{renderSection()}</div>
       </main>
 
       <DataEntryModal
