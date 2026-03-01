@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useDashboardData } from "@/hooks/useDashboardData";
+import { useLocale } from "@/hooks/useLocale";
 import AppSidebar from "@/components/dashboard/AppSidebar";
 import LifeScoreRing from "@/components/dashboard/LifeScoreRing";
 import ProductivityForecast from "@/components/dashboard/ProductivityForecast";
@@ -17,6 +18,7 @@ import DataEntryModal from "@/components/dashboard/DataEntryModal";
 import PredictionEngine from "@/components/dashboard/PredictionEngine";
 import ExplainableAI from "@/components/dashboard/ExplainableAI";
 import AccuracyDashboard from "@/components/dashboard/AccuracyDashboard";
+import LanguageSwitcher from "@/components/dashboard/LanguageSwitcher";
 import { Loader2, Plus } from "lucide-react";
 
 const Index = () => {
@@ -39,6 +41,7 @@ const Index = () => {
 const DashboardContent = ({ activeSection, onNavigate }: { activeSection: string; onNavigate: (id: string) => void }) => {
   const data = useDashboardData();
   const [showEntry, setShowEntry] = useState(false);
+  const { t } = useLocale();
 
   if (data.loading) {
     return (
@@ -80,23 +83,22 @@ const DashboardContent = ({ activeSection, onNavigate }: { activeSection: string
       return <AccuracyDashboard metrics={data.modelMetrics} />;
     }
 
-    // Default overview
     if (!hasData) {
       return (
         <div className="flex flex-col items-center justify-center py-20">
           <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-muted">
             <Plus className="h-8 w-8 text-muted-foreground" />
           </div>
-          <h2 className="mb-2 text-xl font-bold text-foreground">Welcome to ULA v2!</h2>
+          <h2 className="mb-2 text-xl font-bold text-foreground">{t("welcome.title")}</h2>
           <p className="mb-6 max-w-md text-center text-sm text-muted-foreground">
-            Start by logging your first data — screen time, steps, spending, or your life score. Your dashboard will populate as you track your daily habits.
+            {t("welcome.subtitle")}
           </p>
           <button
             onClick={() => setShowEntry(true)}
             className="flex items-center gap-2 rounded-lg bg-gradient-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
           >
             <Plus className="h-4 w-4" />
-            Log Your First Entry
+            {t("welcome.cta")}
           </button>
         </div>
       );
@@ -133,19 +135,20 @@ const DashboardContent = ({ activeSection, onNavigate }: { activeSection: string
         <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-background/80 px-8 backdrop-blur-md">
           <div>
             <h1 className="text-lg font-bold text-foreground">
-              Hello, <span className="text-gradient-primary">{displayName}</span>
+              {t("header.hello")}, <span className="text-gradient-primary">{displayName}</span>
             </h1>
             <p className="text-xs text-muted-foreground">
-              {new Date().toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })} — Here's your life at a glance
+              {new Date().toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })} — {t("header.subtitle")}
             </p>
           </div>
           <div className="flex items-center gap-3">
+            <LanguageSwitcher />
             <button
               onClick={() => setShowEntry(true)}
               className="flex items-center gap-1.5 rounded-lg bg-gradient-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
             >
               <Plus className="h-4 w-4" />
-              Log Data
+              {t("header.logData")}
             </button>
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-primary text-sm font-bold text-primary-foreground">
               {displayName.charAt(0).toUpperCase()}
