@@ -289,6 +289,48 @@ export type Database = {
         }
         Relationships: []
       }
+      notification_settings: {
+        Row: {
+          anti_spam_enabled: boolean
+          channels: Json
+          created_at: string
+          id: string
+          max_daily_notifications: number
+          priority_threshold: string
+          quiet_hours_enabled: boolean
+          quiet_hours_end: string | null
+          quiet_hours_start: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          anti_spam_enabled?: boolean
+          channels?: Json
+          created_at?: string
+          id?: string
+          max_daily_notifications?: number
+          priority_threshold?: string
+          quiet_hours_enabled?: boolean
+          quiet_hours_end?: string | null
+          quiet_hours_start?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          anti_spam_enabled?: boolean
+          channels?: Json
+          created_at?: string
+          id?: string
+          max_daily_notifications?: number
+          priority_threshold?: string
+          quiet_hours_enabled?: boolean
+          quiet_hours_end?: string | null
+          quiet_hours_start?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       nudges: {
         Row: {
           created_at: string
@@ -468,6 +510,39 @@ export type Database = {
           updated_at?: string
           user_id?: string
           work_hours?: Json | null
+        }
+        Relationships: []
+      }
+      user_consents: {
+        Row: {
+          consent_type: string
+          created_at: string
+          granted: boolean
+          granted_at: string | null
+          id: string
+          revoked_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          consent_type: string
+          created_at?: string
+          granted?: boolean
+          granted_at?: string | null
+          id?: string
+          revoked_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          consent_type?: string
+          created_at?: string
+          granted?: boolean
+          granted_at?: string | null
+          id?: string
+          revoked_at?: string | null
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }

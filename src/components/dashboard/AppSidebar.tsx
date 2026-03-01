@@ -14,6 +14,10 @@ import {
   ChevronLeft,
   ChevronRight,
   LogOut,
+  TrendingUp,
+  FlaskConical,
+  Bell,
+  Lock,
 } from "lucide-react";
 
 const navItems = [
@@ -24,6 +28,10 @@ const navItems = [
   { icon: BarChart3, labelKey: "nav.predictions", id: "predictions" },
   { icon: Sparkles, labelKey: "nav.explainable", id: "explainable" },
   { icon: Shield, labelKey: "nav.accuracy", id: "accuracy" },
+  { icon: TrendingUp, labelKey: "nav.analytics", id: "analytics" },
+  { icon: FlaskConical, labelKey: "nav.research", id: "research" },
+  { icon: Bell, labelKey: "nav.notifications", id: "notifications" },
+  { icon: Lock, labelKey: "nav.privacy", id: "privacy" },
   { icon: Settings, labelKey: "nav.settings", id: "settings" },
 ];
 
