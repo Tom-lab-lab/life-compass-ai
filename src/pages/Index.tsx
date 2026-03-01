@@ -18,6 +18,10 @@ import DataEntryModal from "@/components/dashboard/DataEntryModal";
 import PredictionEngine from "@/components/dashboard/PredictionEngine";
 import ExplainableAI from "@/components/dashboard/ExplainableAI";
 import AccuracyDashboard from "@/components/dashboard/AccuracyDashboard";
+import AdvancedAnalytics from "@/components/dashboard/AdvancedAnalytics";
+import ResearchNovelty from "@/components/dashboard/ResearchNovelty";
+import NotificationSettings from "@/components/dashboard/NotificationSettings";
+import PrivacyConsent from "@/components/dashboard/PrivacyConsent";
 import LanguageSwitcher from "@/components/dashboard/LanguageSwitcher";
 import { Loader2, Plus } from "lucide-react";
 
@@ -81,6 +85,37 @@ const DashboardContent = ({ activeSection, onNavigate }: { activeSection: string
 
     if (activeSection === "accuracy") {
       return <AccuracyDashboard metrics={data.modelMetrics} />;
+    }
+
+    if (activeSection === "analytics") {
+      return (
+        <AdvancedAnalytics
+          lifeScores={data.lifeScores}
+          screenTimeLogs={data.screenTimeLogs}
+          stepLogs={data.stepLogs}
+          spendingLogs={data.spendingLogs}
+        />
+      );
+    }
+
+    if (activeSection === "research") {
+      return (
+        <ResearchNovelty
+          lifeScores={data.lifeScores}
+          screenTimeLogs={data.screenTimeLogs}
+          stepLogs={data.stepLogs}
+          spendingLogs={data.spendingLogs}
+          predictions={data.predictions}
+        />
+      );
+    }
+
+    if (activeSection === "notifications") {
+      return <NotificationSettings />;
+    }
+
+    if (activeSection === "privacy") {
+      return <PrivacyConsent />;
     }
 
     if (!hasData) {
