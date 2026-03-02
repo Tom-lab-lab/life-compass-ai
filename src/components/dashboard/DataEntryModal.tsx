@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { X, Plus, Loader2 } from "lucide-react";
+import { useState, useRef } from "react";
+import { X, Plus, Loader2, Upload } from "lucide-react";
 import { createActivityLog } from "@/lib/api";
 import { upsertLifeScore } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
@@ -11,13 +11,93 @@ interface Props {
   onSaved: () => void;
 }
 
-type Tab = "activity" | "lifescore";
+type Tab = "activity" | "lifescore" | "csv";
 
 const activityTypes = [
   { value: "screen_time", label: "Screen Time (min)", categories: ["social", "productive", "entertainment"] },
   { value: "steps", label: "Steps", categories: [] },
   { value: "spending", label: "Spending (₹)", categories: ["Food", "Transport", "Shopping", "Bills", "Entertainment"] },
+  { value: "study", label: "Study Hours", categories: ["reading", "practice", "lecture"] },
+  { value: "sleep", label: "Sleep (hours)", categories: [] },
 ];
+
+const CsvUploadTab = ({ user, onSaved }: { user: any; onSaved: () => void }) => {
+  const { toast } = useToast();
+  const [uploading, setUploading] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const handleCsvUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    setUploading(true);
+    try {
+      const text = await file.text();
+      const lines = text.trim().split("\n");
+      if (lines.length < 2) throw new Error("CSV must have a header row and at least one data row");
+      const headers = lines[0].split(",").map((h) => h.trim().toLowerCase());
+      const typeIdx = headers.indexOf("type");
+      const valueIdx = headers.indexOf("value");
+      const catIdx = headers.indexOf("category");
+      const dateIdx = headers.indexOf("date");
+      if (typeIdx === -1 || valueIdx === -1) throw new Error("CSV must have 'type' and 'value' columns");
+
+      let imported = 0;
+      for (let i = 1; i < lines.length; i++) {
+        const cols = lines[i].split(",").map((c) => c.trim());
+        if (!cols[typeIdx] || !cols[valueIdx]) continue;
+        await createActivityLog({
+          user_id: user.id,
+          log_type: cols[typeIdx],
+          value: Number(cols[valueIdx]),
+          category: catIdx !== -1 ? cols[catIdx] || undefined : undefined,
+          logged_at: dateIdx !== -1 && cols[dateIdx] ? new Date(cols[dateIdx]).toISOString() : undefined,
+        });
+        imported++;
+      }
+      toast({ title: "Import complete", description: `${imported} entries imported from CSV.` });
+      onSaved();
+    } catch (err: any) {
+      toast({ title: "Import failed", description: err.message || "Invalid CSV format", variant: "destructive" });
+    } finally {
+      setUploading(false);
+      if (fileRef.current) fileRef.current.value = "";
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <p className="text-xs text-muted-foreground">
+        Upload a CSV file with columns: <code className="text-primary">type, value, category (optional), date (optional)</code>
+      </p>
+      <div className="rounded-xl border-2 border-dashed border-border bg-muted/20 p-8 text-center">
+        <Upload className="mx-auto mb-3 h-8 w-8 text-muted-foreground" />
+        <p className="mb-2 text-sm text-muted-foreground">Drag & drop or click to upload</p>
+        <input
+          ref={fileRef}
+          type="file"
+          accept=".csv"
+          onChange={handleCsvUpload}
+          className="mx-auto block w-full max-w-xs text-xs text-muted-foreground file:mr-3 file:rounded-lg file:border-0 file:bg-primary/10 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-primary"
+        />
+      </div>
+      {uploading && (
+        <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          Importing...
+        </div>
+      )}
+      <div className="rounded-lg border border-border bg-muted/30 p-3">
+        <p className="mb-1 text-xs font-semibold text-foreground">Example CSV:</p>
+        <pre className="text-[10px] text-muted-foreground font-mono">
+{`type,value,category,date
+steps,8500,,2026-03-01
+spending,350,Food,2026-03-01
+screen_time,45,social,2026-03-01`}
+        </pre>
+      </div>
+    </div>
+  );
+};
 
 const DataEntryModal = ({ open, onClose, onSaved }: Props) => {
   const { user } = useAuth();
@@ -95,22 +175,17 @@ const DataEntryModal = ({ open, onClose, onSaved }: Props) => {
 
         {/* Tabs */}
         <div className="mb-5 flex gap-1 rounded-lg bg-muted p-1">
-          <button
-            onClick={() => setTab("activity")}
-            className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-              tab === "activity" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground"
-            }`}
-          >
-            Activity Log
-          </button>
-          <button
-            onClick={() => setTab("lifescore")}
-            className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-              tab === "lifescore" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground"
-            }`}
-          >
-            Life Score
-          </button>
+          {(["activity", "lifescore", "csv"] as Tab[]).map((t) => (
+            <button
+              key={t}
+              onClick={() => setTab(t)}
+              className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                tab === t ? "bg-background text-foreground shadow-sm" : "text-muted-foreground"
+              }`}
+            >
+              {t === "activity" ? "Activity" : t === "lifescore" ? "Life Score" : "CSV Upload"}
+            </button>
+          ))}
         </div>
 
         {tab === "activity" ? (
@@ -164,7 +239,7 @@ const DataEntryModal = ({ open, onClose, onSaved }: Props) => {
               Log Activity
             </button>
           </div>
-        ) : (
+        ) : tab === "lifescore" ? (
           <div className="space-y-4">
             <p className="text-xs text-muted-foreground">Rate each area of your life from 0–100 for today.</p>
             {(Object.keys(scores) as (keyof typeof scores)[]).map((key) => (
@@ -191,6 +266,8 @@ const DataEntryModal = ({ open, onClose, onSaved }: Props) => {
               Save Today's Score
             </button>
           </div>
+        ) : (
+          <CsvUploadTab user={user} onSaved={onSaved} />
         )}
       </div>
     </div>
