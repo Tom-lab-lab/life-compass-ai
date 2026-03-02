@@ -7,6 +7,15 @@ interface Props {
 }
 
 const ProductivityForecast = ({ scores }: Props) => {
+  if (scores.length === 0) {
+    return (
+      <div className="rounded-xl border border-border bg-card p-6 animate-slide-up" style={{ animationDelay: "0.1s" }}>
+        <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">30-Day Forecast</h3>
+        <p className="py-8 text-center text-sm text-muted-foreground">No score data yet. Log your first entry to see forecasts.</p>
+      </div>
+    );
+  }
+
   const chartData = [...scores].reverse().map((s, i) => ({
     day: i + 1,
     score: s.overall,
