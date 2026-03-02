@@ -16,6 +16,15 @@ interface Props {
 }
 
 const BehavioralHeatmap = ({ logs }: Props) => {
+  if (logs.length === 0) {
+    return (
+      <div className="rounded-xl border border-border bg-card p-6 animate-slide-up" style={{ animationDelay: "0.5s" }}>
+        <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">Screen Time Heatmap</h3>
+        <p className="py-8 text-center text-sm text-muted-foreground">No screen time data yet. Log your usage to see behavioral patterns.</p>
+      </div>
+    );
+  }
+
   // Build heatmap from screen_time logs: group by day-of-week and hour
   const heatmapData: { day: number; hour: number; value: number }[] = [];
   const grid: Record<string, number> = {};

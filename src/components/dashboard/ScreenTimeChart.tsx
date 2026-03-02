@@ -6,6 +6,15 @@ interface Props {
 }
 
 const ScreenTimeChart = ({ logs }: Props) => {
+  if (logs.length === 0) {
+    return (
+      <div className="rounded-xl border border-border bg-card p-6 animate-slide-up" style={{ animationDelay: "0.2s" }}>
+        <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">Screen Time Breakdown</h3>
+        <p className="py-8 text-center text-sm text-muted-foreground">No screen time data yet. Log your first entry to see insights.</p>
+      </div>
+    );
+  }
+
   // Group by date, then by category
   const grouped: Record<string, Record<string, number>> = {};
   logs.forEach((l) => {

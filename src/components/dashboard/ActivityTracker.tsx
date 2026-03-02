@@ -7,6 +7,15 @@ interface Props {
 }
 
 const ActivityTracker = ({ logs }: Props) => {
+  if (logs.length === 0) {
+    return (
+      <div className="rounded-xl border border-border bg-card p-6 animate-slide-up" style={{ animationDelay: "0.25s" }}>
+        <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">Step Tracking</h3>
+        <p className="py-8 text-center text-sm text-muted-foreground">No step data yet. Log your daily steps to start tracking.</p>
+      </div>
+    );
+  }
+
   const chartData = logs.map((l) => ({
     day: new Date(l.logged_at).toLocaleDateString("en-US", { weekday: "short" }),
     steps: Number(l.value),

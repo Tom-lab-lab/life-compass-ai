@@ -14,6 +14,15 @@ const COLORS: Record<string, string> = {
 };
 
 const SpendingBreakdown = ({ logs }: Props) => {
+  if (logs.length === 0) {
+    return (
+      <div className="rounded-xl border border-border bg-card p-6 animate-slide-up" style={{ animationDelay: "0.3s" }}>
+        <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">Monthly Spending</h3>
+        <p className="py-8 text-center text-sm text-muted-foreground">No spending data yet. Log your expenses to track them here.</p>
+      </div>
+    );
+  }
+
   const grouped: Record<string, number> = {};
   logs.forEach((l) => {
     const cat = l.category || "Other";
