@@ -3,6 +3,7 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { useLocale } from "@/hooks/useLocale";
+import { useOnboarding } from "@/hooks/useOnboarding";
 import AppSidebar from "@/components/dashboard/AppSidebar";
 import LifeScoreRing from "@/components/dashboard/LifeScoreRing";
 import ProductivityForecast from "@/components/dashboard/ProductivityForecast";
@@ -23,13 +24,15 @@ import ResearchNovelty from "@/components/dashboard/ResearchNovelty";
 import NotificationSettings from "@/components/dashboard/NotificationSettings";
 import PrivacyConsent from "@/components/dashboard/PrivacyConsent";
 import LanguageSwitcher from "@/components/dashboard/LanguageSwitcher";
+import OnboardingWizard from "@/components/onboarding/OnboardingWizard";
 import { Loader2, Plus } from "lucide-react";
 
 const Index = () => {
   const { user, loading: authLoading } = useAuth();
+  const { needsOnboarding, loading: onboardingLoading, markComplete } = useOnboarding();
   const [activeSection, setActiveSection] = useState("overview");
 
-  if (authLoading) {
+  if (authLoading || onboardingLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -38,6 +41,10 @@ const Index = () => {
   }
 
   if (!user) return <Navigate to="/auth" replace />;
+
+  if (needsOnboarding) {
+    return <OnboardingWizard onComplete={markComplete} />;
+  }
 
   return <DashboardContent activeSection={activeSection} onNavigate={setActiveSection} />;
 };

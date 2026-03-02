@@ -1,4 +1,4 @@
-export type Locale = "en" | "ta";
+export type Locale = "en" | "ta" | "hi";
 
 const translations: Record<Locale, Record<string, string>> = {
   en: {
@@ -95,6 +95,54 @@ const translations: Record<Locale, Record<string, string>> = {
     "language.en": "English",
     "language.ta": "தமிழ்",
   },
+  hi: {
+    "app.name": "ULA v2",
+    "nav.overview": "अवलोकन",
+    "nav.coach": "AI कोच",
+    "nav.goals": "लक्ष्य",
+    "nav.activity": "गतिविधि",
+    "nav.predictions": "पूर्वानुमान",
+    "nav.explainable": "व्याख्या AI",
+    "nav.accuracy": "सटीकता",
+    "nav.analytics": "विश्लेषण",
+    "nav.research": "शोध",
+    "nav.notifications": "सूचनाएं",
+    "nav.privacy": "गोपनीयता",
+    "nav.settings": "सेटिंग्स",
+    "nav.signout": "लॉग आउट",
+    "header.hello": "नमस्ते",
+    "header.subtitle": "आपके जीवन की एक झलक",
+    "header.logData": "डेटा दर्ज करें",
+    "welcome.title": "ULA v2 में स्वागत है!",
+    "welcome.subtitle": "अपना पहला डेटा दर्ज करके शुरू करें — स्क्रीन टाइम, कदम, खर्च, या लाइफ स्कोर। आपका डैशबोर्ड आपकी दैनिक आदतों को ट्रैक करते ही अपडेट होगा।",
+    "welcome.cta": "पहली एंट्री दर्ज करें",
+    "prediction.title": "पूर्वानुमान इंजन",
+    "prediction.generate": "पूर्वानुमान बनाएं",
+    "prediction.risk": "जोखिम",
+    "prediction.confidence": "विश्वास",
+    "prediction.feedback": "क्या यह सहायक था?",
+    "prediction.helpful": "सहायक",
+    "prediction.wrong": "गलत",
+    "prediction.tooFrequent": "बहुत बार",
+    "prediction.notRelevant": "प्रासंगिक नहीं",
+    "xai.title": "व्याख्या AI",
+    "xai.featureImportance": "फीचर महत्व",
+    "xai.whatIf": "क्या-अगर सिमुलेटर",
+    "xai.counterfactual": "प्रतितथ्यात्मक सुझाव",
+    "xai.timeline": "व्यवहार समयरेखा",
+    "accuracy.title": "मॉडल सटीकता",
+    "accuracy.domain": "डोमेन",
+    "accuracy.accuracy": "सटीकता",
+    "accuracy.usefulness": "उपयोगिता",
+    "accuracy.predictions": "पूर्वानुमान",
+    "offline.badge": "ऑफलाइन",
+    "offline.syncing": "सिंक हो रहा है...",
+    "offline.queued": "कतार में",
+    "language.label": "भाषा",
+    "language.en": "English",
+    "language.ta": "தமிழ்",
+    "language.hi": "हिन्दी",
+  },
 };
 
 export function t(key: string, locale: Locale = "en"): string {
@@ -104,7 +152,7 @@ export function t(key: string, locale: Locale = "en"): string {
 export function getStoredLocale(): Locale {
   try {
     const stored = localStorage.getItem("ula-locale");
-    if (stored === "ta" || stored === "en") return stored;
+    if (stored === "ta" || stored === "en" || stored === "hi") return stored;
   } catch {}
   return "en";
 }

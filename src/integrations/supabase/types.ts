@@ -47,6 +47,174 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_explanations: {
+        Row: {
+          counterfactuals: Json
+          created_at: string
+          domain: string
+          explanation_text: string | null
+          feature_importance: Json
+          id: string
+          prediction_id: string | null
+          top_factors: Json
+          user_id: string
+          what_if_scenarios: Json
+        }
+        Insert: {
+          counterfactuals?: Json
+          created_at?: string
+          domain?: string
+          explanation_text?: string | null
+          feature_importance?: Json
+          id?: string
+          prediction_id?: string | null
+          top_factors?: Json
+          user_id: string
+          what_if_scenarios?: Json
+        }
+        Update: {
+          counterfactuals?: Json
+          created_at?: string
+          domain?: string
+          explanation_text?: string | null
+          feature_importance?: Json
+          id?: string
+          prediction_id?: string | null
+          top_factors?: Json
+          user_id?: string
+          what_if_scenarios?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_explanations_prediction_id_fkey"
+            columns: ["prediction_id"]
+            isOneToOne: false
+            referencedRelation: "predictions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      audit_logs: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          resource_id: string | null
+          resource_type: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          resource_id?: string | null
+          resource_type: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          resource_id?: string | null
+          resource_type?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      coaching_feedback: {
+        Row: {
+          comment: string | null
+          created_at: string
+          history_id: string | null
+          id: string
+          rating: number
+          user_id: string
+          was_helpful: boolean | null
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          history_id?: string | null
+          id?: string
+          rating: number
+          user_id: string
+          was_helpful?: boolean | null
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          history_id?: string | null
+          id?: string
+          rating?: number
+          user_id?: string
+          was_helpful?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coaching_feedback_history_id_fkey"
+            columns: ["history_id"]
+            isOneToOne: false
+            referencedRelation: "coaching_history"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      coaching_history: {
+        Row: {
+          actual_improvement: number | null
+          ai_analysis: string | null
+          created_at: string
+          error_pct: number | null
+          id: string
+          plan_id: string | null
+          predicted_improvement: number | null
+          recommendations: Json | null
+          session_type: string
+          user_id: string
+        }
+        Insert: {
+          actual_improvement?: number | null
+          ai_analysis?: string | null
+          created_at?: string
+          error_pct?: number | null
+          id?: string
+          plan_id?: string | null
+          predicted_improvement?: number | null
+          recommendations?: Json | null
+          session_type?: string
+          user_id: string
+        }
+        Update: {
+          actual_improvement?: number | null
+          ai_analysis?: string | null
+          created_at?: string
+          error_pct?: number | null
+          id?: string
+          plan_id?: string | null
+          predicted_improvement?: number | null
+          recommendations?: Json | null
+          session_type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coaching_history_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "coaching_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       coaching_plans: {
         Row: {
           created_at: string
@@ -126,6 +294,8 @@ export type Database = {
           category: string
           created_at: string
           current_value: string | null
+          deadline: string | null
+          domain: string | null
           id: string
           progress: number
           status: string
@@ -138,6 +308,8 @@ export type Database = {
           category?: string
           created_at?: string
           current_value?: string | null
+          deadline?: string | null
+          domain?: string | null
           id?: string
           progress?: number
           status?: string
@@ -150,6 +322,8 @@ export type Database = {
           category?: string
           created_at?: string
           current_value?: string | null
+          deadline?: string | null
+          domain?: string | null
           id?: string
           progress?: number
           status?: string
@@ -289,6 +463,48 @@ export type Database = {
         }
         Relationships: []
       }
+      model_retrain_log: {
+        Row: {
+          created_at: string
+          domain: string
+          drift_score: number | null
+          id: string
+          new_accuracy: number | null
+          new_version: number
+          old_accuracy: number | null
+          old_version: number
+          status: string
+          trigger_reason: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          domain: string
+          drift_score?: number | null
+          id?: string
+          new_accuracy?: number | null
+          new_version?: number
+          old_accuracy?: number | null
+          old_version?: number
+          status?: string
+          trigger_reason: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          domain?: string
+          drift_score?: number | null
+          id?: string
+          new_accuracy?: number | null
+          new_version?: number
+          old_accuracy?: number | null
+          old_version?: number
+          status?: string
+          trigger_reason?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       notification_settings: {
         Row: {
           anti_spam_enabled: boolean
@@ -354,6 +570,39 @@ export type Database = {
           is_read?: boolean
           message?: string
           nudge_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      onboarding_state: {
+        Row: {
+          completed: boolean
+          completed_at: string | null
+          created_at: string
+          data_sources: string[]
+          id: string
+          selected_goals: string[]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          data_sources?: string[]
+          id?: string
+          selected_goals?: string[]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          data_sources?: string[]
+          id?: string
+          selected_goals?: string[]
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
