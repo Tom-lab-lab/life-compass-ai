@@ -63,6 +63,36 @@ const DashboardContent = ({ activeSection, onNavigate }: { activeSection: string
   const hasData = data.lifeScores.length > 0 || data.screenTimeLogs.length > 0 || data.stepLogs.length > 0;
 
   const renderSection = () => {
+    if (activeSection === "coach") {
+      return (
+        <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+          <CoachingRoadmap plan={data.coachingPlan} onRefresh={data.refresh} />
+          <NudgeFeed nudges={data.nudges} />
+        </div>
+      );
+    }
+
+    if (activeSection === "goals") {
+      return (
+        <div className="max-w-2xl">
+          <GoalsPanel goals={data.goals} onRefresh={data.refresh} />
+        </div>
+      );
+    }
+
+    if (activeSection === "activity") {
+      return (
+        <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+          <ActivityTracker logs={data.stepLogs} />
+          <ScreenTimeChart logs={data.screenTimeLogs} />
+          <SpendingBreakdown logs={data.spendingLogs} />
+          <div className="xl:col-span-2">
+            <BehavioralHeatmap logs={data.screenTimeLogs} />
+          </div>
+        </div>
+      );
+    }
+
     if (activeSection === "predictions") {
       return (
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
