@@ -25,6 +25,11 @@ import NotificationSettings from "@/components/dashboard/NotificationSettings";
 import PrivacyConsent from "@/components/dashboard/PrivacyConsent";
 import LanguageSwitcher from "@/components/dashboard/LanguageSwitcher";
 import OnboardingWizard from "@/components/onboarding/OnboardingWizard";
+import LifeSimulator from "@/components/dashboard/LifeSimulator";
+import ModelHealthPanel from "@/components/dashboard/ModelHealthPanel";
+import BehaviorCluster from "@/components/dashboard/BehaviorCluster";
+import ResearchMetrics from "@/components/dashboard/ResearchMetrics";
+import ResearchExport from "@/components/dashboard/ResearchExport";
 import { Loader2, Plus } from "lucide-react";
 
 const Index = () => {
@@ -147,13 +152,13 @@ const DashboardContent = ({ activeSection, onNavigate }: { activeSection: string
       );
     }
 
-    if (activeSection === "notifications") {
-      return <NotificationSettings />;
-    }
-
-    if (activeSection === "privacy") {
-      return <PrivacyConsent />;
-    }
+    if (activeSection === "notifications") return <NotificationSettings />;
+    if (activeSection === "privacy") return <PrivacyConsent />;
+    if (activeSection === "simulator") return <LifeSimulator />;
+    if (activeSection === "model-health") return <ModelHealthPanel />;
+    if (activeSection === "cluster") return <BehaviorCluster />;
+    if (activeSection === "research-metrics") return <ResearchMetrics />;
+    if (activeSection === "export") return <ResearchExport />;
 
     if (!hasData) {
       return (

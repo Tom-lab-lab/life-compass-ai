@@ -56,6 +56,7 @@ export type Database = {
           feature_importance: Json
           id: string
           prediction_id: string | null
+          stability_score: number | null
           top_factors: Json
           user_id: string
           what_if_scenarios: Json
@@ -68,6 +69,7 @@ export type Database = {
           feature_importance?: Json
           id?: string
           prediction_id?: string | null
+          stability_score?: number | null
           top_factors?: Json
           user_id: string
           what_if_scenarios?: Json
@@ -80,6 +82,7 @@ export type Database = {
           feature_importance?: Json
           id?: string
           prediction_id?: string | null
+          stability_score?: number | null
           top_factors?: Json
           user_id?: string
           what_if_scenarios?: Json
@@ -406,6 +409,30 @@ export type Database = {
         }
         Relationships: []
       }
+      life_simulations: {
+        Row: {
+          created_at: string
+          id: string
+          projected_outcomes: Json
+          simulation_inputs: Json
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          projected_outcomes?: Json
+          simulation_inputs?: Json
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          projected_outcomes?: Json
+          simulation_inputs?: Json
+          user_id?: string
+        }
+        Relationships: []
+      }
       model_metrics: {
         Row: {
           accuracy: number
@@ -607,6 +634,41 @@ export type Database = {
         }
         Relationships: []
       }
+      prediction_events: {
+        Row: {
+          created_at: string
+          handled: boolean
+          id: string
+          prediction_id: string | null
+          trigger_type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          handled?: boolean
+          id?: string
+          prediction_id?: string | null
+          trigger_type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          handled?: boolean
+          id?: string
+          prediction_id?: string | null
+          trigger_type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prediction_events_prediction_id_fkey"
+            columns: ["prediction_id"]
+            isOneToOne: false
+            referencedRelation: "predictions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       prediction_feedback: {
         Row: {
           comment: string | null
@@ -720,6 +782,33 @@ export type Database = {
           id?: string
           timezone?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      user_behavior_clusters: {
+        Row: {
+          cluster_type: string
+          confidence_score: number
+          created_at: string
+          id: string
+          last_updated: string
+          user_id: string
+        }
+        Insert: {
+          cluster_type?: string
+          confidence_score?: number
+          created_at?: string
+          id?: string
+          last_updated?: string
+          user_id: string
+        }
+        Update: {
+          cluster_type?: string
+          confidence_score?: number
+          created_at?: string
+          id?: string
+          last_updated?: string
+          user_id?: string
         }
         Relationships: []
       }

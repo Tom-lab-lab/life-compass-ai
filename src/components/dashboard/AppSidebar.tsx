@@ -18,6 +18,10 @@ import {
   FlaskConical,
   Bell,
   Lock,
+  Users,
+  Wand2,
+  Download,
+  HeartPulse,
 } from "lucide-react";
 
 const navItems = [
@@ -29,6 +33,11 @@ const navItems = [
   { icon: Sparkles, labelKey: "nav.explainable", id: "explainable" },
   { icon: Shield, labelKey: "nav.accuracy", id: "accuracy" },
   { icon: TrendingUp, labelKey: "nav.analytics", id: "analytics" },
+  { icon: Wand2, labelKey: "nav.simulator", id: "simulator" },
+  { icon: Users, labelKey: "nav.cluster", id: "cluster" },
+  { icon: HeartPulse, labelKey: "nav.modelHealth", id: "model-health" },
+  { icon: FlaskConical, labelKey: "nav.researchMetrics", id: "research-metrics" },
+  { icon: Download, labelKey: "nav.export", id: "export" },
   { icon: FlaskConical, labelKey: "nav.research", id: "research" },
   { icon: Bell, labelKey: "nav.notifications", id: "notifications" },
   { icon: Lock, labelKey: "nav.privacy", id: "privacy" },
