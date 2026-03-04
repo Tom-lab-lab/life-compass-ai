@@ -295,45 +295,66 @@ export type Database = {
       goals: {
         Row: {
           category: string
+          constraints: Json | null
           created_at: string
           current_value: string | null
           deadline: string | null
           domain: string | null
+          financial_budget: number | null
           id: string
+          priority_rank: number | null
           progress: number
+          qualitative_notes: string | null
+          risk_tolerance: string | null
           status: string
           target_value: string | null
+          time_budget_hours: number | null
           title: string
           updated_at: string
           user_id: string
+          weight: number | null
         }
         Insert: {
           category?: string
+          constraints?: Json | null
           created_at?: string
           current_value?: string | null
           deadline?: string | null
           domain?: string | null
+          financial_budget?: number | null
           id?: string
+          priority_rank?: number | null
           progress?: number
+          qualitative_notes?: string | null
+          risk_tolerance?: string | null
           status?: string
           target_value?: string | null
+          time_budget_hours?: number | null
           title: string
           updated_at?: string
           user_id: string
+          weight?: number | null
         }
         Update: {
           category?: string
+          constraints?: Json | null
           created_at?: string
           current_value?: string | null
           deadline?: string | null
           domain?: string | null
+          financial_budget?: number | null
           id?: string
+          priority_rank?: number | null
           progress?: number
+          qualitative_notes?: string | null
+          risk_tolerance?: string | null
           status?: string
           target_value?: string | null
+          time_budget_hours?: number | null
           title?: string
           updated_at?: string
           user_id?: string
+          weight?: number | null
         }
         Relationships: []
       }

@@ -13,6 +13,7 @@ import SpendingBreakdown from "@/components/dashboard/SpendingBreakdown";
 import CoachingRoadmap from "@/components/dashboard/CoachingRoadmap";
 import NudgeFeed from "@/components/dashboard/NudgeFeed";
 import GoalsPanel from "@/components/dashboard/GoalsPanel";
+import DecisionEngine from "@/components/dashboard/DecisionEngine";
 import InterventionReport from "@/components/dashboard/InterventionReport";
 import BehavioralHeatmap from "@/components/dashboard/BehavioralHeatmap";
 import DataEntryModal from "@/components/dashboard/DataEntryModal";
@@ -86,8 +87,9 @@ const DashboardContent = ({ activeSection, onNavigate }: { activeSection: string
 
     if (activeSection === "goals") {
       return (
-        <div className="max-w-2xl">
+        <div className="space-y-6 max-w-3xl">
           <GoalsPanel goals={data.goals} onRefresh={data.refresh} />
+          <DecisionEngine goals={data.goals} />
         </div>
       );
     }
