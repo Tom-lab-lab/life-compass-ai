@@ -24,9 +24,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
+      (event, session) => {
         setSession(session);
         setLoading(false);
+
+        // Log auth events to audit_logs
+        if (session?.user && (event === "SIGNED_IN" || event === "SIGNED_OUT" || event === "TOKEN_REFRESHED")) {
+          const action = event === "SIGNED_IN" ? "login" : event === "SIGNED_OUT" ? "logout" : "token_refresh";
+          // Use setTimeout to avoid blocking the auth flow
+          setTimeout(() => {
+            supabase.from("audit_logs").insert({
+              user_id: session.user.id,
+              action,
+              resource_type: "auth",
+              metadata: { event, timestamp: new Date().toISOString() },
+            }).then(() => {});
+          }, 0);
+        }
       }
     );
 

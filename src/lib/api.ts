@@ -48,6 +48,13 @@ export const createGoal = async (goal: {
   title: string;
   category: string;
   target_value?: string;
+  deadline?: string;
+  priority_rank?: number;
+  weight?: number;
+  risk_tolerance?: string;
+  time_budget_hours?: number;
+  financial_budget?: number;
+  qualitative_notes?: string;
 }) => {
   const { data, error } = await supabase.from("goals").insert(goal).select().single();
   if (error) throw error;
