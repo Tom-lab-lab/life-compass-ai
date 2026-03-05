@@ -39,7 +39,6 @@ serve(async (req) => {
         });
       }
 
-      // Get previous feedback to improve predictions
       const { data: feedback } = await supabase
         .from("prediction_feedback")
         .select("feedback_type")
@@ -168,6 +167,9 @@ For each prediction, analyze real patterns in the data. Be specific with numbers
       // Update behavior profile
       await updateBehaviorProfile(supabase, user.id, scores || [], logs || []);
 
+      // Auto-compute and update model_metrics for each domain
+      await autoComputeMetrics(supabase, user.id);
+
       return new Response(JSON.stringify({ predictions: saved }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -185,23 +187,41 @@ For each prediction, analyze real patterns in the data. Be specific with numbers
       });
       if (error) throw error;
 
-      // Update prediction status if marked wrong
       if (feedback_type === "wrong") {
         await supabase.from("predictions").update({ status: "incorrect", resolved_at: new Date().toISOString() }).eq("id", prediction_id);
       } else if (feedback_type === "helpful") {
         await supabase.from("predictions").update({ status: "confirmed", resolved_at: new Date().toISOString(), accuracy_score: 80 }).eq("id", prediction_id);
       }
 
-      // Update model metrics
-      await updateModelMetrics(supabase, user.id, prediction_id, feedback_type);
+      // Re-compute all metrics after feedback
+      await autoComputeMetrics(supabase, user.id);
 
       return new Response(JSON.stringify({ success: true }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
+    // === Compute Metrics (callable independently) ===
+    if (action === "compute-metrics") {
+      await autoComputeMetrics(supabase, user.id);
+      
+      const { data: metrics } = await supabase
+        .from("model_metrics")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(30);
+
+      return new Response(JSON.stringify({ metrics: metrics || [] }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     // === Get Model Metrics ===
     if (action === "get-metrics") {
+      // Auto-compute first to ensure fresh data
+      await autoComputeMetrics(supabase, user.id);
+
       const { data: metrics } = await supabase
         .from("model_metrics")
         .select("*")
@@ -231,6 +251,118 @@ For each prediction, analyze real patterns in the data. Be specific with numbers
   }
 });
 
+async function autoComputeMetrics(supabase: any, userId: string) {
+  try {
+    // Get all predictions for this user
+    const { data: allPreds } = await supabase
+      .from("predictions")
+      .select("id, domain, status, confidence_score, risk_score, created_at")
+      .eq("user_id", userId);
+
+    if (!allPreds || allPreds.length === 0) return;
+
+    // Get all feedback
+    const { data: allFeedback } = await supabase
+      .from("prediction_feedback")
+      .select("prediction_id, feedback_type")
+      .eq("user_id", userId);
+
+    const feedbackMap = new Map<string, string[]>();
+    (allFeedback || []).forEach((f: any) => {
+      if (!feedbackMap.has(f.prediction_id)) feedbackMap.set(f.prediction_id, []);
+      feedbackMap.get(f.prediction_id)!.push(f.feedback_type);
+    });
+
+    // Group predictions by domain
+    const byDomain: Record<string, any[]> = {};
+    allPreds.forEach((p: any) => {
+      if (!byDomain[p.domain]) byDomain[p.domain] = [];
+      byDomain[p.domain].push(p);
+    });
+
+    const now = new Date();
+    const periodStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split("T")[0];
+    const periodEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split("T")[0];
+
+    for (const [domain, preds] of Object.entries(byDomain)) {
+      const totalPredictions = preds.length;
+      const confirmed = preds.filter((p: any) => p.status === "confirmed").length;
+      const incorrect = preds.filter((p: any) => p.status === "incorrect").length;
+      const avgConfidence = preds.reduce((s: number, p: any) => s + p.confidence_score, 0) / totalPredictions;
+
+      let feedbackHelpful = 0;
+      let feedbackWrong = 0;
+      let feedbackTotal = 0;
+      preds.forEach((p: any) => {
+        const fb = feedbackMap.get(p.id) || [];
+        fb.forEach((type: string) => {
+          feedbackTotal++;
+          if (type === "helpful") feedbackHelpful++;
+          if (type === "wrong") feedbackWrong++;
+        });
+      });
+
+      const accuracy = totalPredictions > 0
+        ? feedbackTotal > 0
+          ? (feedbackHelpful / feedbackTotal) * 100
+          : (confirmed / totalPredictions) * 100 || avgConfidence * 0.8
+        : 0;
+
+      const usefulnessRate = feedbackTotal > 0 ? feedbackHelpful / feedbackTotal : 0.5;
+
+      // Calculate drift score (compare recent vs older accuracy)
+      const recentPreds = preds.filter((p: any) => {
+        const age = (now.getTime() - new Date(p.created_at).getTime()) / (1000 * 60 * 60 * 24);
+        return age <= 7;
+      });
+      const olderPreds = preds.filter((p: any) => {
+        const age = (now.getTime() - new Date(p.created_at).getTime()) / (1000 * 60 * 60 * 24);
+        return age > 7 && age <= 30;
+      });
+      const recentAvgConf = recentPreds.length > 0 
+        ? recentPreds.reduce((s: number, p: any) => s + p.confidence_score, 0) / recentPreds.length 
+        : avgConfidence;
+      const olderAvgConf = olderPreds.length > 0 
+        ? olderPreds.reduce((s: number, p: any) => s + p.confidence_score, 0) / olderPreds.length 
+        : avgConfidence;
+      const driftScore = Math.abs(recentAvgConf - olderAvgConf);
+
+      // Upsert model_metrics for this domain and period
+      const { data: existing } = await supabase
+        .from("model_metrics")
+        .select("id")
+        .eq("user_id", userId)
+        .eq("domain", domain)
+        .eq("period_start", periodStart)
+        .maybeSingle();
+
+      const metricsRow = {
+        user_id: userId,
+        domain,
+        total_predictions: totalPredictions,
+        correct_predictions: confirmed,
+        accuracy: Math.round(accuracy * 100) / 100,
+        avg_confidence: Math.round(avgConfidence * 100) / 100,
+        feedback_total: feedbackTotal,
+        feedback_helpful: feedbackHelpful,
+        feedback_wrong: feedbackWrong,
+        usefulness_rate: Math.round(usefulnessRate * 100) / 100,
+        drift_score: Math.round(driftScore * 100) / 100,
+        period_start: periodStart,
+        period_end: periodEnd,
+      };
+
+      if (existing) {
+        await supabase.from("model_metrics").update(metricsRow).eq("id", existing.id);
+      } else {
+        await supabase.from("model_metrics").insert(metricsRow);
+      }
+    }
+  } catch (e) {
+    console.error("Auto-compute metrics error:", e);
+  }
+}
+
 async function updateBehaviorProfile(supabase: any, userId: string, scores: any[], logs: any[]) {
   try {
     const spendingLogs = logs.filter((l: any) => l.log_type === "spending");
@@ -252,61 +384,5 @@ async function updateBehaviorProfile(supabase: any, userId: string, scores: any[
     }, { onConflict: "user_id" });
   } catch (e) {
     console.error("Profile update error:", e);
-  }
-}
-
-async function updateModelMetrics(supabase: any, userId: string, predictionId: string, feedbackType: string) {
-  try {
-    const { data: pred } = await supabase.from("predictions").select("domain").eq("id", predictionId).single();
-    if (!pred) return;
-
-    const now = new Date();
-    const periodStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split("T")[0];
-    const periodEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split("T")[0];
-
-    const { data: existing } = await supabase
-      .from("model_metrics")
-      .select("*")
-      .eq("user_id", userId)
-      .eq("domain", pred.domain)
-      .eq("period_start", periodStart)
-      .maybeSingle();
-
-    if (existing) {
-      const updates: any = {
-        feedback_total: existing.feedback_total + 1,
-      };
-      if (feedbackType === "helpful") {
-        updates.feedback_helpful = existing.feedback_helpful + 1;
-        updates.correct_predictions = existing.correct_predictions + 1;
-      } else if (feedbackType === "wrong") {
-        updates.feedback_wrong = existing.feedback_wrong + 1;
-      }
-      updates.total_predictions = existing.total_predictions;
-      updates.usefulness_rate = updates.feedback_helpful !== undefined
-        ? (updates.feedback_helpful || existing.feedback_helpful) / (updates.feedback_total)
-        : existing.usefulness_rate;
-      updates.accuracy = existing.total_predictions > 0
-        ? ((updates.correct_predictions || existing.correct_predictions) / existing.total_predictions) * 100
-        : 0;
-
-      await supabase.from("model_metrics").update(updates).eq("id", existing.id);
-    } else {
-      await supabase.from("model_metrics").insert({
-        user_id: userId,
-        domain: pred.domain,
-        total_predictions: 1,
-        correct_predictions: feedbackType === "helpful" ? 1 : 0,
-        accuracy: feedbackType === "helpful" ? 100 : 0,
-        feedback_total: 1,
-        feedback_helpful: feedbackType === "helpful" ? 1 : 0,
-        feedback_wrong: feedbackType === "wrong" ? 1 : 0,
-        usefulness_rate: feedbackType === "helpful" ? 1 : 0,
-        period_start: periodStart,
-        period_end: periodEnd,
-      });
-    }
-  } catch (e) {
-    console.error("Metrics update error:", e);
   }
 }
