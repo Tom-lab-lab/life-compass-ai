@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Slider } from "@/components/ui/slider";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-import { Loader2, Sparkles, TrendingUp, AlertTriangle } from "lucide-react";
+import { Loader2, Sparkles, TrendingUp, AlertTriangle, History } from "lucide-react";
 
 const LifeSimulator = () => {
+  const { user } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [inputs, setInputs] = useState({
@@ -16,6 +18,39 @@ const LifeSimulator = () => {
     study_change: 0,
   });
   const [outcomes, setOutcomes] = useState<any>(null);
+  const [history, setHistory] = useState<any[]>([]);
+
+  const loadHistory = async () => {
+    if (!user) return;
+    const { data } = await supabase
+      .from("life_simulations")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(5);
+    setHistory(data || []);
+    // Load the most recent simulation result
+    if (data && data.length > 0 && !outcomes) {
+      setOutcomes(data[0].projected_outcomes);
+      setInputs(data[0].simulation_inputs as any);
+    }
+  };
+
+  useEffect(() => {
+    if (!user) return;
+    loadHistory();
+
+    // Realtime subscription
+    const channel = supabase
+      .channel("life-simulator-realtime")
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "life_simulations", filter: `user_id=eq.${user.id}` }, (payload) => {
+        setOutcomes(payload.new.projected_outcomes);
+        loadHistory();
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [user?.id]);
 
   const sliders = [
     { key: "sleep_change", label: "Sleep Hours", min: -3, max: 3, unit: "hrs" },
@@ -39,6 +74,11 @@ const LifeSimulator = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const loadPastSimulation = (sim: any) => {
+    setInputs(sim.simulation_inputs);
+    setOutcomes(sim.projected_outcomes);
   };
 
   return (
@@ -129,6 +169,37 @@ const LifeSimulator = () => {
             )}
           </div>
         </>
+      )}
+
+      {/* Simulation History */}
+      {history.length > 0 && (
+        <div className="rounded-2xl border border-border bg-gradient-card p-5">
+          <div className="mb-3 flex items-center gap-2">
+            <History className="h-4 w-4 text-primary" />
+            <h4 className="text-xs font-bold text-foreground">Past Simulations</h4>
+          </div>
+          <div className="space-y-2">
+            {history.map((sim) => (
+              <button
+                key={sim.id}
+                onClick={() => loadPastSimulation(sim)}
+                className="flex w-full items-center justify-between rounded-lg border border-border bg-muted/20 px-3 py-2 text-left transition-colors hover:border-primary"
+              >
+                <div className="flex items-center gap-3 text-xs">
+                  <span className="font-semibold text-foreground">
+                    Overall: {(sim.projected_outcomes as any)?.projected_overall ?? "—"}
+                  </span>
+                  <span className="text-muted-foreground">
+                    Burnout: {(sim.projected_outcomes as any)?.burnout_probability ?? "—"}%
+                  </span>
+                </div>
+                <span className="text-[10px] text-muted-foreground">
+                  {new Date(sim.created_at).toLocaleDateString()}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
       )}
     </div>
   );

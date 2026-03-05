@@ -15,11 +15,17 @@ const ModelHealthPanel = () => {
   const checkHealth = async () => {
     setLoading(true);
     try {
+      // First ensure metrics are computed
+      await supabase.functions.invoke("ai-predict", {
+        body: { action: "compute-metrics" },
+      });
+
       const { data, error } = await supabase.functions.invoke("ai-model-health", {
         body: { action: "check-health" },
       });
       if (error) throw error;
       setHealth(data.health);
+      loadRetrainLog();
     } catch {
       toast({ title: "Error", description: "Failed to check model health.", variant: "destructive" });
     } finally {
@@ -27,16 +33,30 @@ const ModelHealthPanel = () => {
     }
   };
 
-  useEffect(() => {
+  const loadRetrainLog = async () => {
     if (!user) return;
-    checkHealth();
-    supabase
+    const { data } = await supabase
       .from("model_retrain_log")
       .select("*")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false })
-      .limit(20)
-      .then(({ data }) => setRetrainLog(data || []));
+      .limit(20);
+    setRetrainLog(data || []);
+  };
+
+  useEffect(() => {
+    if (!user) return;
+    checkHealth();
+
+    // Realtime subscription for model_metrics changes
+    const channel = supabase
+      .channel("model-health-realtime")
+      .on("postgres_changes", { event: "*", schema: "public", table: "model_metrics", filter: `user_id=eq.${user.id}` }, () => {
+        checkHealth();
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
   }, [user?.id]);
 
   const statusColor = health?.status === "healthy" ? "text-emerald-400" : health?.status === "drift_detected" ? "text-amber-400" : "text-muted-foreground";
@@ -56,7 +76,10 @@ const ModelHealthPanel = () => {
         </div>
 
         {!health || health.status === "no_data" ? (
-          <p className="py-8 text-center text-sm text-muted-foreground">Submit prediction feedback to see model health metrics.</p>
+          <div className="py-8 text-center">
+            <p className="text-sm text-muted-foreground">Generating predictions first to compute health metrics...</p>
+            {loading && <Loader2 className="mx-auto mt-2 h-5 w-5 animate-spin text-primary" />}
+          </div>
         ) : (
           <>
             <div className="mb-4 flex items-center gap-2">
