@@ -111,7 +111,7 @@ const DashboardContent = ({ activeSection, onNavigate }: { activeSection: string
       return (
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
           <PredictionEngine predictions={data.predictions} onRefresh={data.refresh} />
-          <AccuracyDashboard metrics={data.modelMetrics} />
+          <AccuracyDashboard />
         </div>
       );
     }
@@ -128,7 +128,7 @@ const DashboardContent = ({ activeSection, onNavigate }: { activeSection: string
     }
 
     if (activeSection === "accuracy") {
-      return <AccuracyDashboard metrics={data.modelMetrics} />;
+      return <AccuracyDashboard />;
     }
 
     if (activeSection === "analytics") {
