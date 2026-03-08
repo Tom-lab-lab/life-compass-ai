@@ -26,6 +26,7 @@ import {
   Calculator,
   Beaker,
   Layout,
+  Sun,
 } from "lucide-react";
 
 const navItems = [

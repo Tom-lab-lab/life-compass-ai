@@ -66,7 +66,18 @@ const Index = () => {
 const DashboardContent = ({ activeSection, onNavigate }: { activeSection: string; onNavigate: (id: string) => void }) => {
   const data = useDashboardData();
   const [showEntry, setShowEntry] = useState(false);
+  const [showCheckIn, setShowCheckIn] = useState(false);
   const { t } = useLocale();
+
+  // Show check-in prompt once per day
+  useEffect(() => {
+    const today = new Date().toISOString().split("T")[0];
+    const lastCheckIn = localStorage.getItem("lastCheckInPrompt");
+    if (lastCheckIn !== today) {
+      setShowCheckIn(true);
+      localStorage.setItem("lastCheckInPrompt", today);
+    }
+  }, []);
 
   if (data.loading) {
     return (
