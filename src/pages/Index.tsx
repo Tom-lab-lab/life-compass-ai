@@ -37,7 +37,9 @@ import MCDAPanel from "@/components/dashboard/MCDAPanel";
 import EvaluationPipeline from "@/components/dashboard/EvaluationPipeline";
 import ExperimentMode from "@/components/dashboard/ExperimentMode";
 import SystemArchitecture from "@/components/dashboard/SystemArchitecture";
-import { Loader2, Plus } from "lucide-react";
+import DailyCheckIn from "@/components/dashboard/DailyCheckIn";
+import CheckInAnalytics from "@/components/dashboard/CheckInAnalytics";
+import { Loader2, Plus, Sun } from "lucide-react";
 
 const Index = () => {
   const { user, loading: authLoading } = useAuth();
