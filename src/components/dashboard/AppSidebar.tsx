@@ -23,6 +23,9 @@ import {
   Download,
   HeartPulse,
   ClipboardCheck,
+  Calculator,
+  Beaker,
+  Layout,
 } from "lucide-react";
 
 const navItems = [
@@ -34,10 +37,14 @@ const navItems = [
   { icon: Sparkles, labelKey: "nav.explainable", id: "explainable" },
   { icon: Shield, labelKey: "nav.accuracy", id: "accuracy" },
   { icon: TrendingUp, labelKey: "nav.analytics", id: "analytics" },
+  { icon: Calculator, labelKey: "nav.mcda", id: "mcda" },
   { icon: Wand2, labelKey: "nav.simulator", id: "simulator" },
   { icon: Users, labelKey: "nav.cluster", id: "cluster" },
   { icon: HeartPulse, labelKey: "nav.modelHealth", id: "model-health" },
   { icon: FlaskConical, labelKey: "nav.researchMetrics", id: "research-metrics" },
+  { icon: FlaskConical, labelKey: "nav.evaluation", id: "evaluation" },
+  { icon: Beaker, labelKey: "nav.experiment", id: "experiment" },
+  { icon: Layout, labelKey: "nav.architecture", id: "architecture" },
   { icon: Download, labelKey: "nav.export", id: "export" },
   { icon: ClipboardCheck, labelKey: "nav.weeklyFeedback", id: "weekly-feedback" },
   { icon: FlaskConical, labelKey: "nav.research", id: "research" },

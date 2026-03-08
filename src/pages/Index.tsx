@@ -33,6 +33,10 @@ import ResearchMetrics from "@/components/dashboard/ResearchMetrics";
 import ResearchExport from "@/components/dashboard/ResearchExport";
 import WeeklyFeedbackPanel from "@/components/dashboard/WeeklyFeedbackPanel";
 import WeeklyPerformanceCharts from "@/components/dashboard/WeeklyPerformanceCharts";
+import MCDAPanel from "@/components/dashboard/MCDAPanel";
+import EvaluationPipeline from "@/components/dashboard/EvaluationPipeline";
+import ExperimentMode from "@/components/dashboard/ExperimentMode";
+import SystemArchitecture from "@/components/dashboard/SystemArchitecture";
 import { Loader2, Plus } from "lucide-react";
 
 const Index = () => {
@@ -163,6 +167,10 @@ const DashboardContent = ({ activeSection, onNavigate }: { activeSection: string
     if (activeSection === "cluster") return <BehaviorCluster />;
     if (activeSection === "research-metrics") return <ResearchMetrics />;
     if (activeSection === "export") return <ResearchExport />;
+    if (activeSection === "mcda") return <MCDAPanel goals={data.goals} lifeScores={data.lifeScores} />;
+    if (activeSection === "evaluation") return <EvaluationPipeline />;
+    if (activeSection === "experiment") return <ExperimentMode />;
+    if (activeSection === "architecture") return <SystemArchitecture />;
     if (activeSection === "weekly-feedback") {
       return (
         <div className="space-y-6">
