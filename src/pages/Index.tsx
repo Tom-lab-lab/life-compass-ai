@@ -173,6 +173,7 @@ const DashboardContent = ({ activeSection, onNavigate }: { activeSection: string
       );
     }
 
+    if (activeSection === "checkin") return <CheckInAnalytics />;
     if (activeSection === "notifications") return <NotificationSettings />;
     if (activeSection === "privacy") return <PrivacyConsent />;
     if (activeSection === "simulator") return <LifeSimulator />;
