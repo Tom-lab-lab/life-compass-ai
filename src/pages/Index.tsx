@@ -39,6 +39,7 @@ import ExperimentMode from "@/components/dashboard/ExperimentMode";
 import SystemArchitecture from "@/components/dashboard/SystemArchitecture";
 import DailyCheckIn from "@/components/dashboard/DailyCheckIn";
 import CheckInAnalytics from "@/components/dashboard/CheckInAnalytics";
+import TodayCheckInScore from "@/components/dashboard/TodayCheckInScore";
 import { Loader2, Plus, Sun } from "lucide-react";
 
 const Index = () => {
