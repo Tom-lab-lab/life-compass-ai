@@ -21,16 +21,12 @@ import PredictionEngine from "@/components/dashboard/PredictionEngine";
 import ExplainableAI from "@/components/dashboard/ExplainableAI";
 import AccuracyDashboard from "@/components/dashboard/AccuracyDashboard";
 import AdvancedAnalytics from "@/components/dashboard/AdvancedAnalytics";
-import ResearchNovelty from "@/components/dashboard/ResearchNovelty";
-import NotificationSettings from "@/components/dashboard/NotificationSettings";
 import PrivacyConsent from "@/components/dashboard/PrivacyConsent";
 import LanguageSwitcher from "@/components/dashboard/LanguageSwitcher";
 import OnboardingWizard from "@/components/onboarding/OnboardingWizard";
 import LifeSimulator from "@/components/dashboard/LifeSimulator";
 import ModelHealthPanel from "@/components/dashboard/ModelHealthPanel";
 import BehaviorCluster from "@/components/dashboard/BehaviorCluster";
-import ResearchMetrics from "@/components/dashboard/ResearchMetrics";
-import ResearchExport from "@/components/dashboard/ResearchExport";
 import WeeklyFeedbackPanel from "@/components/dashboard/WeeklyFeedbackPanel";
 import WeeklyPerformanceCharts from "@/components/dashboard/WeeklyPerformanceCharts";
 import MCDAPanel from "@/components/dashboard/MCDAPanel";
@@ -162,26 +158,12 @@ const DashboardContent = ({ activeSection, onNavigate }: { activeSection: string
       );
     }
 
-    if (activeSection === "research") {
-      return (
-        <ResearchNovelty
-          lifeScores={data.lifeScores}
-          screenTimeLogs={data.screenTimeLogs}
-          stepLogs={data.stepLogs}
-          spendingLogs={data.spendingLogs}
-          predictions={data.predictions}
-        />
-      );
-    }
-
     if (activeSection === "checkin") return <CheckInAnalytics />;
-    if (activeSection === "notifications") return <NotificationSettings />;
     if (activeSection === "privacy") return <PrivacyConsent />;
     if (activeSection === "simulator") return <LifeSimulator />;
     if (activeSection === "model-health") return <ModelHealthPanel />;
     if (activeSection === "cluster") return <BehaviorCluster />;
-    if (activeSection === "research-metrics") return <ResearchMetrics />;
-    if (activeSection === "export") return <ResearchExport />;
+    if (activeSection === "mcda") return <MCDAPanel goals={data.goals} lifeScores={data.lifeScores} />;
     if (activeSection === "mcda") return <MCDAPanel goals={data.goals} lifeScores={data.lifeScores} />;
     if (activeSection === "evaluation") return <EvaluationPipeline />;
     if (activeSection === "experiment") return <ExperimentMode />;
