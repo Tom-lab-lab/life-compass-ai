@@ -161,13 +161,7 @@ const DashboardContent = ({ activeSection, onNavigate }: { activeSection: string
     if (activeSection === "checkin") return <CheckInAnalytics />;
     if (activeSection === "privacy") return <PrivacyConsent />;
     if (activeSection === "simulator") return <LifeSimulator />;
-    if (activeSection === "model-health") return <ModelHealthPanel />;
-    if (activeSection === "cluster") return <BehaviorCluster />;
     if (activeSection === "mcda") return <MCDAPanel goals={data.goals} lifeScores={data.lifeScores} />;
-    if (activeSection === "mcda") return <MCDAPanel goals={data.goals} lifeScores={data.lifeScores} />;
-    if (activeSection === "evaluation") return <EvaluationPipeline />;
-    if (activeSection === "experiment") return <ExperimentMode />;
-    if (activeSection === "architecture") return <SystemArchitecture />;
     if (activeSection === "weekly-feedback") {
       return (
         <div className="space-y-6">
