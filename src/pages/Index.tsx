@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useDashboardData } from "@/hooks/useDashboardData";
@@ -37,7 +37,9 @@ import MCDAPanel from "@/components/dashboard/MCDAPanel";
 import EvaluationPipeline from "@/components/dashboard/EvaluationPipeline";
 import ExperimentMode from "@/components/dashboard/ExperimentMode";
 import SystemArchitecture from "@/components/dashboard/SystemArchitecture";
-import { Loader2, Plus } from "lucide-react";
+import DailyCheckIn from "@/components/dashboard/DailyCheckIn";
+import CheckInAnalytics from "@/components/dashboard/CheckInAnalytics";
+import { Loader2, Plus, Sun } from "lucide-react";
 
 const Index = () => {
   const { user, loading: authLoading } = useAuth();
@@ -64,7 +66,18 @@ const Index = () => {
 const DashboardContent = ({ activeSection, onNavigate }: { activeSection: string; onNavigate: (id: string) => void }) => {
   const data = useDashboardData();
   const [showEntry, setShowEntry] = useState(false);
+  const [showCheckIn, setShowCheckIn] = useState(false);
   const { t } = useLocale();
+
+  // Show check-in prompt once per day
+  useEffect(() => {
+    const today = new Date().toISOString().split("T")[0];
+    const lastCheckIn = localStorage.getItem("lastCheckInPrompt");
+    if (lastCheckIn !== today) {
+      setShowCheckIn(true);
+      localStorage.setItem("lastCheckInPrompt", today);
+    }
+  }, []);
 
   if (data.loading) {
     return (
@@ -160,6 +173,7 @@ const DashboardContent = ({ activeSection, onNavigate }: { activeSection: string
       );
     }
 
+    if (activeSection === "checkin") return <CheckInAnalytics />;
     if (activeSection === "notifications") return <NotificationSettings />;
     if (activeSection === "privacy") return <PrivacyConsent />;
     if (activeSection === "simulator") return <LifeSimulator />;
@@ -245,6 +259,13 @@ const DashboardContent = ({ activeSection, onNavigate }: { activeSection: string
           <div className="flex items-center gap-3">
             <LanguageSwitcher />
             <button
+              onClick={() => setShowCheckIn(true)}
+              className="flex items-center gap-1.5 rounded-lg border border-accent/30 bg-accent/10 px-4 py-2 text-sm font-semibold text-accent transition-colors hover:bg-accent/20"
+            >
+              <Sun className="h-4 w-4" />
+              Check-In
+            </button>
+            <button
               onClick={() => setShowEntry(true)}
               className="flex items-center gap-1.5 rounded-lg bg-gradient-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
             >
@@ -266,6 +287,14 @@ const DashboardContent = ({ activeSection, onNavigate }: { activeSection: string
         onSaved={() => {
           data.refresh();
           setShowEntry(false);
+        }}
+      />
+      <DailyCheckIn
+        open={showCheckIn}
+        onClose={() => setShowCheckIn(false)}
+        onSaved={() => {
+          data.refresh();
+          setShowCheckIn(false);
         }}
       />
     </div>
