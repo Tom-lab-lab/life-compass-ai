@@ -2,6 +2,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import { useLocale } from "@/hooks/useLocale";
+import { useCheckInStreak } from "@/hooks/useCheckInStreak";
 import {
   LayoutDashboard,
   Brain,
@@ -27,6 +28,7 @@ import {
   Beaker,
   Layout,
   Sun,
+  Flame,
 } from "lucide-react";
 
 const navItems = [
@@ -64,6 +66,7 @@ const AppSidebar = ({ activeSection, onNavigate }: AppSidebarProps) => {
   const [collapsed, setCollapsed] = useState(false);
   const { signOut } = useAuth();
   const { t } = useLocale();
+  const streak = useCheckInStreak();
 
   return (
     <aside
@@ -83,7 +86,7 @@ const AppSidebar = ({ activeSection, onNavigate }: AppSidebarProps) => {
         )}
       </div>
 
-      <nav className="flex-1 space-y-1 p-3">
+      <nav className="flex-1 space-y-1 overflow-y-auto p-3">
         {navItems.map((item) => (
           <button
             key={item.id}
@@ -96,7 +99,18 @@ const AppSidebar = ({ activeSection, onNavigate }: AppSidebarProps) => {
             )}
           >
             <item.icon className="h-4.5 w-4.5 shrink-0" />
-            {!collapsed && <span>{t(item.labelKey)}</span>}
+            {!collapsed && <span className="flex-1 text-left">{t(item.labelKey)}</span>}
+            {item.id === "checkin" && streak > 0 && (
+              <span
+                className={cn(
+                  "flex items-center gap-1 rounded-full bg-accent/20 text-accent font-bold",
+                  collapsed ? "h-5 w-5 justify-center text-[10px]" : "px-2 py-0.5 text-xs"
+                )}
+                title={`${streak}-day streak`}
+              >
+                {collapsed ? streak : <><Flame className="h-3 w-3" />{streak}</>}
+              </span>
+            )}
           </button>
         ))}
       </nav>
