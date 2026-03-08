@@ -4,6 +4,43 @@ import { createActivityLog } from "@/lib/api";
 import { upsertLifeScore } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { logUserActivity } from "@/lib/activityLogger";
+
+const VALID_LOG_TYPES = ['screen_time', 'steps', 'spending', 'focus_session', 'sleep', 'study', 'exercise', 'habit', 'activity', 'expense', 'goal'];
+
+const CSV_TYPE_MAPPING: Record<string, string> = {
+  steps: 'steps',
+  sleep: 'sleep',
+  exercise: 'exercise',
+  screen_time: 'screen_time',
+  spending: 'spending',
+  study_time: 'study',
+  study: 'study',
+  focus_session: 'focus_session',
+  // Fallback aliases
+  walk: 'steps',
+  run: 'exercise',
+  workout: 'exercise',
+  expense: 'spending',
+  expenses: 'spending',
+  reading: 'study',
+  habit: 'habit',
+  activity: 'activity',
+  goal: 'goal',
+};
+
+function mapLogType(rawType: string): { mapped: string; wasTransformed: boolean } {
+  const normalized = rawType.trim().toLowerCase();
+  if (VALID_LOG_TYPES.includes(normalized)) {
+    return { mapped: normalized, wasTransformed: false };
+  }
+  const mapped = CSV_TYPE_MAPPING[normalized];
+  if (mapped) {
+    return { mapped, wasTransformed: true };
+  }
+  // Default fallback
+  return { mapped: 'habit', wasTransformed: true };
+}
 
 interface Props {
   open: boolean;
@@ -42,19 +79,48 @@ const CsvUploadTab = ({ user, onSaved }: { user: any; onSaved: () => void }) => 
       if (typeIdx === -1 || valueIdx === -1) throw new Error("CSV must have 'type' and 'value' columns");
 
       let imported = 0;
+      let transformed = 0;
+      const transformLog: string[] = [];
+
       for (let i = 1; i < lines.length; i++) {
         const cols = lines[i].split(",").map((c) => c.trim());
         if (!cols[typeIdx] || !cols[valueIdx]) continue;
+
+        const rawType = cols[typeIdx];
+        const { mapped, wasTransformed } = mapLogType(rawType);
+
+        if (wasTransformed) {
+          transformed++;
+          transformLog.push(`Row ${i}: "${rawType}" → "${mapped}"`);
+          // Log transformation for debugging
+          if (user) {
+            logUserActivity(user.id, "csv_type_transform", "DataEntryModal", `Mapped "${rawType}" to "${mapped}"`);
+          }
+        }
+
+        const numValue = Number(cols[valueIdx].replace(/[^0-9.\-]/g, ''));
+        if (isNaN(numValue)) {
+          transformLog.push(`Row ${i}: skipped — invalid value "${cols[valueIdx]}"`);
+          continue;
+        }
+
         await createActivityLog({
           user_id: user.id,
-          log_type: cols[typeIdx],
-          value: Number(cols[valueIdx]),
+          log_type: mapped,
+          value: numValue,
           category: catIdx !== -1 ? cols[catIdx] || undefined : undefined,
           logged_at: dateIdx !== -1 && cols[dateIdx] ? new Date(cols[dateIdx]).toISOString() : undefined,
         });
         imported++;
       }
-      toast({ title: "Import complete", description: `${imported} entries imported from CSV.` });
+
+      const desc = transformed > 0
+        ? `${imported} entries imported. ${transformed} type(s) auto-mapped.`
+        : `${imported} entries imported from CSV.`;
+      toast({ title: "Import complete", description: desc });
+      if (transformLog.length > 0) {
+        console.log("[CSV Import] Transformations:", transformLog);
+      }
       onSaved();
     } catch (err: any) {
       toast({ title: "Import failed", description: err.message || "Invalid CSV format", variant: "destructive" });
@@ -92,8 +158,13 @@ const CsvUploadTab = ({ user, onSaved }: { user: any; onSaved: () => void }) => 
 {`type,value,category,date
 steps,8500,,2026-03-01
 spending,350,Food,2026-03-01
+sleep,7.5,,2026-03-01
+exercise,30,,2026-03-01
 screen_time,45,social,2026-03-01`}
         </pre>
+        <p className="mt-1 text-[10px] text-muted-foreground">
+          Valid types: steps, spending, screen_time, sleep, study, exercise, focus_session. Other values are auto-mapped.
+        </p>
       </div>
     </div>
   );
