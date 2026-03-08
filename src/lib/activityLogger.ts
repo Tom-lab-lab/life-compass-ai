@@ -18,19 +18,20 @@ export function logUserActivity(
   details?: string
 ): void {
   // Fire-and-forget: no await, no blocking
-  supabase
-    .from("user_activity_logs" as any)
-    .insert({
-      user_id: userId,
-      action_type: actionType,
-      feature_name: featureName,
-      action_details: details ?? null,
-      session_id: sessionId,
-    })
-    .then(({ error }) => {
-      if (error) console.warn("[ActivityLogger]", error.message);
-    })
-    .catch((e) => {
-      console.warn("[ActivityLogger]", e);
-    });
+  try {
+    supabase
+      .from("user_activity_logs" as any)
+      .insert({
+        user_id: userId,
+        action_type: actionType,
+        feature_name: featureName,
+        action_details: details ?? null,
+        session_id: sessionId,
+      })
+      .then(({ error }) => {
+        if (error) console.warn("[ActivityLogger]", error.message);
+      });
+  } catch (e) {
+    console.warn("[ActivityLogger]", e);
+  }
 }
