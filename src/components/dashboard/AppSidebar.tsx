@@ -40,7 +40,7 @@ const navItems = [
   { icon: BarChart3, labelKey: "nav.predictions", id: "predictions" },
   { icon: Sparkles, labelKey: "nav.explainable", id: "explainable" },
   { icon: Shield, labelKey: "nav.accuracy", id: "accuracy" },
-  { icon: TrendingUp, labelKey: "nav.analytics", id: "analytics" },
+  
   { icon: Calculator, labelKey: "nav.mcda", id: "mcda" },
   { icon: Wand2, labelKey: "nav.simulator", id: "simulator" },
   { icon: Users, labelKey: "nav.cluster", id: "cluster" },
