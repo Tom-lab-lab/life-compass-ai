@@ -69,6 +69,7 @@ const GoalsPanel = ({ goals, onRefresh }: Props) => {
         financial_budget: financialBudget ? parseFloat(financialBudget) : undefined,
         qualitative_notes: qualitativeNotes || undefined,
       });
+      logUserActivity(user.id, "create_goal", "GoalsPanel", `Created goal: ${title.trim()} [${category}]`);
       resetForm();
       setShowAdd(false);
       onRefresh();
