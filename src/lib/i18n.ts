@@ -25,6 +25,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "nav.evaluation": "Evaluation",
     "nav.experiment": "Experiments",
     "nav.architecture": "Architecture",
+    "nav.checkin": "Daily Check-In",
     "nav.signout": "Sign Out",
     "header.hello": "Hello",
     "header.subtitle": "Here's your life at a glance",
