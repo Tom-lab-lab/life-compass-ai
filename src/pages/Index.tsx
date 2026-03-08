@@ -259,6 +259,13 @@ const DashboardContent = ({ activeSection, onNavigate }: { activeSection: string
           <div className="flex items-center gap-3">
             <LanguageSwitcher />
             <button
+              onClick={() => setShowCheckIn(true)}
+              className="flex items-center gap-1.5 rounded-lg border border-accent/30 bg-accent/10 px-4 py-2 text-sm font-semibold text-accent transition-colors hover:bg-accent/20"
+            >
+              <Sun className="h-4 w-4" />
+              Check-In
+            </button>
+            <button
               onClick={() => setShowEntry(true)}
               className="flex items-center gap-1.5 rounded-lg bg-gradient-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
             >
