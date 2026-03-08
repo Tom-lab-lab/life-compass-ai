@@ -3,6 +3,7 @@ import { Target, Plus, Trash2, Loader2, ChevronDown, ChevronUp, Sliders } from "
 import { createGoal, updateGoal, deleteGoal } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { logUserActivity } from "@/lib/activityLogger";
 import type { Goal } from "@/hooks/useDashboardData";
 
 const categoryBorder: Record<string, string> = {
