@@ -22,7 +22,7 @@ import {
   Users,
   Wand2,
   
-  HeartPulse,
+  
   ClipboardCheck,
   Calculator,
   Beaker,
@@ -44,12 +44,10 @@ const navItems = [
   { icon: Calculator, labelKey: "nav.mcda", id: "mcda" },
   { icon: Wand2, labelKey: "nav.simulator", id: "simulator" },
   { icon: Users, labelKey: "nav.cluster", id: "cluster" },
-  { icon: HeartPulse, labelKey: "nav.modelHealth", id: "model-health" },
   { icon: FlaskConical, labelKey: "nav.evaluation", id: "evaluation" },
   { icon: Beaker, labelKey: "nav.experiment", id: "experiment" },
   { icon: Layout, labelKey: "nav.architecture", id: "architecture" },
   { icon: ClipboardCheck, labelKey: "nav.weeklyFeedback", id: "weekly-feedback" },
-  { icon: Lock, labelKey: "nav.privacy", id: "privacy" },
   { icon: Lock, labelKey: "nav.privacy", id: "privacy" },
   { icon: Settings, labelKey: "nav.settings", id: "settings" },
 ];
