@@ -21,7 +21,7 @@ import {
   Lock,
   Users,
   Wand2,
-  Download,
+  
   HeartPulse,
   ClipboardCheck,
   Calculator,
