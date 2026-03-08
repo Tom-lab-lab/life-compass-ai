@@ -51,7 +51,7 @@ Deno.serve(async (req) => {
       const { error: nudgeErr } = await supabase.from("nudges").insert({
         user_id: user.id,
         message: `You missed your daily check-in yesterday (${yesterdayStr}). Don't break your streak! 🔥`,
-        nudge_type: "reminder",
+        nudge_type: "warning",
       });
       if (nudgeErr) {
         console.error(`Nudge insert failed for ${user.id}:`, nudgeErr.message);
