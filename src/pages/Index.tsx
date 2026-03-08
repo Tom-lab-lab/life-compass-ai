@@ -31,6 +31,8 @@ import ModelHealthPanel from "@/components/dashboard/ModelHealthPanel";
 import BehaviorCluster from "@/components/dashboard/BehaviorCluster";
 import ResearchMetrics from "@/components/dashboard/ResearchMetrics";
 import ResearchExport from "@/components/dashboard/ResearchExport";
+import WeeklyFeedbackPanel from "@/components/dashboard/WeeklyFeedbackPanel";
+import WeeklyPerformanceCharts from "@/components/dashboard/WeeklyPerformanceCharts";
 import { Loader2, Plus } from "lucide-react";
 
 const Index = () => {
@@ -161,6 +163,18 @@ const DashboardContent = ({ activeSection, onNavigate }: { activeSection: string
     if (activeSection === "cluster") return <BehaviorCluster />;
     if (activeSection === "research-metrics") return <ResearchMetrics />;
     if (activeSection === "export") return <ResearchExport />;
+    if (activeSection === "weekly-feedback") {
+      return (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+            <WeeklyFeedbackPanel />
+            <div className="xl:col-span-2">
+              <WeeklyPerformanceCharts />
+            </div>
+          </div>
+        </div>
+      );
+    }
 
     if (!hasData) {
       return (
