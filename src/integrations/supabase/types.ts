@@ -292,6 +292,39 @@ export type Database = {
           },
         ]
       }
+      experiment_results: {
+        Row: {
+          created_at: string
+          experiment_name: string
+          id: string
+          method: string
+          metrics: Json
+          profile_count: number
+          raw_results: Json
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          experiment_name: string
+          id?: string
+          method: string
+          metrics?: Json
+          profile_count?: number
+          raw_results?: Json
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          experiment_name?: string
+          id?: string
+          method?: string
+          metrics?: Json
+          profile_count?: number
+          raw_results?: Json
+          user_id?: string
+        }
+        Relationships: []
+      }
       goals: {
         Row: {
           category: string
@@ -803,6 +836,57 @@ export type Database = {
           id?: string
           timezone?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      recommendation_history: {
+        Row: {
+          accuracy_score: number | null
+          actual_outcome: Json | null
+          contributing_factors: Json
+          created_at: string
+          expected_outcome: Json
+          id: string
+          mcda_scores: Json
+          mcda_weights: Json
+          recommendation_text: string
+          recommendation_type: string
+          resolved_at: string | null
+          user_id: string
+          user_rating: number | null
+          was_accepted: boolean | null
+        }
+        Insert: {
+          accuracy_score?: number | null
+          actual_outcome?: Json | null
+          contributing_factors?: Json
+          created_at?: string
+          expected_outcome?: Json
+          id?: string
+          mcda_scores?: Json
+          mcda_weights?: Json
+          recommendation_text: string
+          recommendation_type?: string
+          resolved_at?: string | null
+          user_id: string
+          user_rating?: number | null
+          was_accepted?: boolean | null
+        }
+        Update: {
+          accuracy_score?: number | null
+          actual_outcome?: Json | null
+          contributing_factors?: Json
+          created_at?: string
+          expected_outcome?: Json
+          id?: string
+          mcda_scores?: Json
+          mcda_weights?: Json
+          recommendation_text?: string
+          recommendation_type?: string
+          resolved_at?: string | null
+          user_id?: string
+          user_rating?: number | null
+          was_accepted?: boolean | null
         }
         Relationships: []
       }
