@@ -30,6 +30,7 @@ import {
 
 const navItems = [
   { icon: LayoutDashboard, labelKey: "nav.overview", id: "overview" },
+  { icon: Sun, labelKey: "nav.checkin", id: "checkin" },
   { icon: Brain, labelKey: "nav.coach", id: "coach" },
   { icon: Target, labelKey: "nav.goals", id: "goals" },
   { icon: Activity, labelKey: "nav.activity", id: "activity" },
