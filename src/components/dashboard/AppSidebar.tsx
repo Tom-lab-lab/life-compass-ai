@@ -17,7 +17,7 @@ import {
   LogOut,
   TrendingUp,
   FlaskConical,
-  Bell,
+  
   Lock,
   Users,
   Wand2,

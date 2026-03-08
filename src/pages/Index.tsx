@@ -27,8 +27,6 @@ import OnboardingWizard from "@/components/onboarding/OnboardingWizard";
 import LifeSimulator from "@/components/dashboard/LifeSimulator";
 import ModelHealthPanel from "@/components/dashboard/ModelHealthPanel";
 import BehaviorCluster from "@/components/dashboard/BehaviorCluster";
-import ResearchMetrics from "@/components/dashboard/ResearchMetrics";
-import ResearchExport from "@/components/dashboard/ResearchExport";
 import WeeklyFeedbackPanel from "@/components/dashboard/WeeklyFeedbackPanel";
 import WeeklyPerformanceCharts from "@/components/dashboard/WeeklyPerformanceCharts";
 import MCDAPanel from "@/components/dashboard/MCDAPanel";
