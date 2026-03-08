@@ -47,16 +47,6 @@ const ModelHealthPanel = () => {
   useEffect(() => {
     if (!user) return;
     checkHealth();
-
-    // Realtime subscription for model_metrics changes
-    const channel = supabase
-      .channel("model-health-realtime")
-      .on("postgres_changes", { event: "*", schema: "public", table: "model_metrics", filter: `user_id=eq.${user.id}` }, () => {
-        checkHealth();
-      })
-      .subscribe();
-
-    return () => { supabase.removeChannel(channel); };
   }, [user?.id]);
 
   const statusColor = health?.status === "healthy" ? "text-emerald-400" : health?.status === "drift_detected" ? "text-amber-400" : "text-muted-foreground";
