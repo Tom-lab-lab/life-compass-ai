@@ -31,6 +31,7 @@ const CoachingRoadmap = ({ plan, onRefresh }: Props) => {
   const handleToggle = async (taskId: string, current: boolean) => {
     try {
       await toggleDailyTask(taskId, !current);
+      if (user) logUserActivity(user.id, "toggle_task", "CoachingRoadmap", `Task ${taskId}: ${!current ? "completed" : "uncompleted"}`);
       onRefresh();
     } catch {
       toast({ title: "Error", description: "Failed to update task", variant: "destructive" });
