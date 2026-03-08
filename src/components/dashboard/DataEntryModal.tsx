@@ -158,8 +158,13 @@ const CsvUploadTab = ({ user, onSaved }: { user: any; onSaved: () => void }) => 
 {`type,value,category,date
 steps,8500,,2026-03-01
 spending,350,Food,2026-03-01
+sleep,7.5,,2026-03-01
+exercise,30,,2026-03-01
 screen_time,45,social,2026-03-01`}
         </pre>
+        <p className="mt-1 text-[10px] text-muted-foreground">
+          Valid types: steps, spending, screen_time, sleep, study, exercise, focus_session. Other values are auto-mapped.
+        </p>
       </div>
     </div>
   );
