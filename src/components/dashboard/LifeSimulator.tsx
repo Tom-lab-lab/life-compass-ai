@@ -69,6 +69,7 @@ const LifeSimulator = () => {
       });
       if (error) throw error;
       setOutcomes(data.outcomes);
+      logUserActivity(user!.id, "run_simulation", "LifeSimulator", JSON.stringify(inputs));
       toast({ title: "Simulation complete", description: "30-day projection generated." });
     } catch {
       toast({ title: "Error", description: "Simulation failed.", variant: "destructive" });
