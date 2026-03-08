@@ -289,6 +289,14 @@ const DashboardContent = ({ activeSection, onNavigate }: { activeSection: string
           setShowEntry(false);
         }}
       />
+      <DailyCheckIn
+        open={showCheckIn}
+        onClose={() => setShowCheckIn(false)}
+        onSaved={() => {
+          data.refresh();
+          setShowCheckIn(false);
+        }}
+      />
     </div>
   );
 };
