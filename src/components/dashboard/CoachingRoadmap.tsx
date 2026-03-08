@@ -23,6 +23,7 @@ interface Props {
 const CoachingRoadmap = ({ plan, onRefresh }: Props) => {
   const [generating, setGenerating] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const tasks = plan?.daily_tasks?.sort((a, b) => a.day_number - b.day_number) || [];
   const completed = tasks.filter((t) => t.is_completed).length;
