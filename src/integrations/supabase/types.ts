@@ -248,6 +248,45 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_checkins: {
+        Row: {
+          created_at: string
+          date: string
+          exercise_done: boolean
+          id: string
+          optional_note: string | null
+          productivity_score: number
+          sleep_hours: number
+          spending_amount: number
+          stress_level: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          date?: string
+          exercise_done?: boolean
+          id?: string
+          optional_note?: string | null
+          productivity_score?: number
+          sleep_hours?: number
+          spending_amount?: number
+          stress_level?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          exercise_done?: boolean
+          id?: string
+          optional_note?: string | null
+          productivity_score?: number
+          sleep_hours?: number
+          spending_amount?: number
+          stress_level?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       daily_tasks: {
         Row: {
           category: string
