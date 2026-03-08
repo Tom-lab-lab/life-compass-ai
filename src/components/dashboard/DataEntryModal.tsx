@@ -4,6 +4,43 @@ import { createActivityLog } from "@/lib/api";
 import { upsertLifeScore } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { logUserActivity } from "@/lib/activityLogger";
+
+const VALID_LOG_TYPES = ['screen_time', 'steps', 'spending', 'focus_session', 'sleep', 'study', 'exercise', 'habit', 'activity', 'expense', 'goal'];
+
+const CSV_TYPE_MAPPING: Record<string, string> = {
+  steps: 'steps',
+  sleep: 'sleep',
+  exercise: 'exercise',
+  screen_time: 'screen_time',
+  spending: 'spending',
+  study_time: 'study',
+  study: 'study',
+  focus_session: 'focus_session',
+  // Fallback aliases
+  walk: 'steps',
+  run: 'exercise',
+  workout: 'exercise',
+  expense: 'spending',
+  expenses: 'spending',
+  reading: 'study',
+  habit: 'habit',
+  activity: 'activity',
+  goal: 'goal',
+};
+
+function mapLogType(rawType: string): { mapped: string; wasTransformed: boolean } {
+  const normalized = rawType.trim().toLowerCase();
+  if (VALID_LOG_TYPES.includes(normalized)) {
+    return { mapped: normalized, wasTransformed: false };
+  }
+  const mapped = CSV_TYPE_MAPPING[normalized];
+  if (mapped) {
+    return { mapped, wasTransformed: true };
+  }
+  // Default fallback
+  return { mapped: 'habit', wasTransformed: true };
+}
 
 interface Props {
   open: boolean;
