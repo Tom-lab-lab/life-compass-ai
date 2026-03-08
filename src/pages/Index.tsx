@@ -222,9 +222,10 @@ const DashboardContent = ({ activeSection, onNavigate }: { activeSection: string
 
     return (
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
-        <div className="xl:col-span-2">
+        <div className="lg:col-span-1 xl:col-span-1">
           <LifeScoreRing scores={data.lifeScores} />
         </div>
+        <TodayCheckInScore />
         <NudgeFeed nudges={data.nudges} />
 
         <PredictionEngine predictions={data.predictions} onRefresh={data.refresh} />
