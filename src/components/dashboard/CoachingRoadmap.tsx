@@ -2,7 +2,9 @@ import { useState } from "react";
 import { CheckCircle2, Circle, Brain, Loader2, Sparkles } from "lucide-react";
 import { toggleDailyTask } from "@/lib/api";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { logUserActivity } from "@/lib/activityLogger";
 import type { CoachingPlan } from "@/hooks/useDashboardData";
 
 const categoryColors: Record<string, string> = {
