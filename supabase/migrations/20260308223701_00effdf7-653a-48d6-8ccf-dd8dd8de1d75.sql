@@ -1,0 +1,2 @@
+ALTER TABLE public.activity_logs DROP CONSTRAINT activity_logs_log_type_check;
+ALTER TABLE public.activity_logs ADD CONSTRAINT activity_logs_log_type_check CHECK (log_type = ANY (ARRAY['screen_time', 'steps', 'spending', 'focus_session', 'sleep', 'study', 'exercise', 'habit', 'activity', 'expense', 'goal']));
