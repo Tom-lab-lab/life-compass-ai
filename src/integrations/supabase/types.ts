@@ -905,6 +905,42 @@ export type Database = {
         }
         Relationships: []
       }
+      weekly_feedback: {
+        Row: {
+          created_at: string
+          decision_accuracy: number
+          feedback: string | null
+          goal_progress: number
+          id: string
+          productivity_score: number
+          satisfaction_rating: number
+          user_id: string
+          week_number: number
+        }
+        Insert: {
+          created_at?: string
+          decision_accuracy?: number
+          feedback?: string | null
+          goal_progress?: number
+          id?: string
+          productivity_score?: number
+          satisfaction_rating?: number
+          user_id: string
+          week_number: number
+        }
+        Update: {
+          created_at?: string
+          decision_accuracy?: number
+          feedback?: string | null
+          goal_progress?: number
+          id?: string
+          productivity_score?: number
+          satisfaction_rating?: number
+          user_id?: string
+          week_number?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
