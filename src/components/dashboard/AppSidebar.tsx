@@ -22,6 +22,7 @@ import {
   Wand2,
   Download,
   HeartPulse,
+  ClipboardCheck,
 } from "lucide-react";
 
 const navItems = [
@@ -38,6 +39,7 @@ const navItems = [
   { icon: HeartPulse, labelKey: "nav.modelHealth", id: "model-health" },
   { icon: FlaskConical, labelKey: "nav.researchMetrics", id: "research-metrics" },
   { icon: Download, labelKey: "nav.export", id: "export" },
+  { icon: ClipboardCheck, labelKey: "nav.weeklyFeedback", id: "weekly-feedback" },
   { icon: FlaskConical, labelKey: "nav.research", id: "research" },
   { icon: Bell, labelKey: "nav.notifications", id: "notifications" },
   { icon: Lock, labelKey: "nav.privacy", id: "privacy" },
