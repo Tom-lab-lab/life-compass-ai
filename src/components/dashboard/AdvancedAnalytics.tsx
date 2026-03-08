@@ -1,6 +1,8 @@
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLocale } from "@/hooks/useLocale";
+import { useAuth } from "@/hooks/useAuth";
+import { logUserActivity } from "@/lib/activityLogger";
 import {
   ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   LineChart, Line, Legend,
