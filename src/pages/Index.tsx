@@ -21,8 +21,6 @@ import PredictionEngine from "@/components/dashboard/PredictionEngine";
 import ExplainableAI from "@/components/dashboard/ExplainableAI";
 import AccuracyDashboard from "@/components/dashboard/AccuracyDashboard";
 import AdvancedAnalytics from "@/components/dashboard/AdvancedAnalytics";
-import ResearchNovelty from "@/components/dashboard/ResearchNovelty";
-import NotificationSettings from "@/components/dashboard/NotificationSettings";
 import PrivacyConsent from "@/components/dashboard/PrivacyConsent";
 import LanguageSwitcher from "@/components/dashboard/LanguageSwitcher";
 import OnboardingWizard from "@/components/onboarding/OnboardingWizard";
