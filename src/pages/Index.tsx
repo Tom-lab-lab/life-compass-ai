@@ -158,26 +158,12 @@ const DashboardContent = ({ activeSection, onNavigate }: { activeSection: string
       );
     }
 
-    if (activeSection === "research") {
-      return (
-        <ResearchNovelty
-          lifeScores={data.lifeScores}
-          screenTimeLogs={data.screenTimeLogs}
-          stepLogs={data.stepLogs}
-          spendingLogs={data.spendingLogs}
-          predictions={data.predictions}
-        />
-      );
-    }
-
     if (activeSection === "checkin") return <CheckInAnalytics />;
-    if (activeSection === "notifications") return <NotificationSettings />;
     if (activeSection === "privacy") return <PrivacyConsent />;
     if (activeSection === "simulator") return <LifeSimulator />;
     if (activeSection === "model-health") return <ModelHealthPanel />;
     if (activeSection === "cluster") return <BehaviorCluster />;
-    if (activeSection === "research-metrics") return <ResearchMetrics />;
-    if (activeSection === "export") return <ResearchExport />;
+    if (activeSection === "mcda") return <MCDAPanel goals={data.goals} lifeScores={data.lifeScores} />;
     if (activeSection === "mcda") return <MCDAPanel goals={data.goals} lifeScores={data.lifeScores} />;
     if (activeSection === "evaluation") return <EvaluationPipeline />;
     if (activeSection === "experiment") return <ExperimentMode />;
