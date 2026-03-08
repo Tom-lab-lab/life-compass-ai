@@ -1,6 +1,9 @@
+import { useEffect } from "react";
 import type { ActivityLog } from "@/hooks/useDashboardData";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, ReferenceLine, Tooltip } from "recharts";
 import { Footprints } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { logUserActivity } from "@/lib/activityLogger";
 
 interface Props {
   logs: ActivityLog[];
