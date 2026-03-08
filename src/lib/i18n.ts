@@ -83,6 +83,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "nav.evaluation": "மதிப்பீடு",
     "nav.experiment": "சோதனைகள்",
     "nav.architecture": "கட்டமைப்பு",
+    "nav.checkin": "தினசரி செக்-இன்",
     "nav.signout": "வெளியேறு",
     "header.hello": "வணக்கம்",
     "header.subtitle": "உங்கள் வாழ்க்கையின் ஒரு பார்வை",
