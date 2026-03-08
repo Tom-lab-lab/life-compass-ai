@@ -890,6 +890,36 @@ export type Database = {
         }
         Relationships: []
       }
+      user_activity_logs: {
+        Row: {
+          action_details: string | null
+          action_type: string
+          created_at: string
+          feature_name: string
+          id: string
+          session_id: string | null
+          user_id: string
+        }
+        Insert: {
+          action_details?: string | null
+          action_type: string
+          created_at?: string
+          feature_name: string
+          id?: string
+          session_id?: string | null
+          user_id: string
+        }
+        Update: {
+          action_details?: string | null
+          action_type?: string
+          created_at?: string
+          feature_name?: string
+          id?: string
+          session_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_behavior_clusters: {
         Row: {
           cluster_type: string
