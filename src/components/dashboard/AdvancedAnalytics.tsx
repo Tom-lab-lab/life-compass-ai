@@ -1,6 +1,8 @@
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLocale } from "@/hooks/useLocale";
+import { useAuth } from "@/hooks/useAuth";
+import { logUserActivity } from "@/lib/activityLogger";
 import {
   ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   LineChart, Line, Legend,
@@ -42,6 +44,11 @@ function getCorrelationLabel(r: number): string {
 
 const AdvancedAnalytics = ({ lifeScores, screenTimeLogs, stepLogs, spendingLogs }: Props) => {
   const { t } = useLocale();
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (user) logUserActivity(user.id, "open_feature", "AdvancedAnalytics", "Viewed correlation analytics");
+  }, [user?.id]);
 
   const charts = useMemo(() => {
     const scoresByDate = new Map(lifeScores.map(s => [s.date, s]));

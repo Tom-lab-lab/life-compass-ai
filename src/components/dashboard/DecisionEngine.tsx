@@ -3,6 +3,7 @@ import { Brain, Loader2, AlertTriangle, CheckCircle2, ArrowRight } from "lucide-
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { logUserActivity } from "@/lib/activityLogger";
 import type { Goal } from "@/hooks/useDashboardData";
 
 interface ConflictItem {
@@ -46,6 +47,7 @@ const DecisionEngine = ({ goals }: Props) => {
       });
       if (error) throw error;
       setResult(data);
+      logUserActivity(user.id, "analyze_goals", "DecisionEngine", `Analyzed ${goals.length} goals`);
     } catch (err: any) {
       toast({ title: "Error", description: err.message || "Failed to analyze", variant: "destructive" });
     } finally {

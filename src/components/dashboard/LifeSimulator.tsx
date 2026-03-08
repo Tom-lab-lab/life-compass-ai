@@ -3,6 +3,7 @@ import { Slider } from "@/components/ui/slider";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { logUserActivity } from "@/lib/activityLogger";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Loader2, Sparkles, TrendingUp, AlertTriangle, History } from "lucide-react";
 
@@ -68,6 +69,7 @@ const LifeSimulator = () => {
       });
       if (error) throw error;
       setOutcomes(data.outcomes);
+      logUserActivity(user!.id, "run_simulation", "LifeSimulator", JSON.stringify(inputs));
       toast({ title: "Simulation complete", description: "30-day projection generated." });
     } catch {
       toast({ title: "Error", description: "Simulation failed.", variant: "destructive" });
@@ -79,6 +81,7 @@ const LifeSimulator = () => {
   const loadPastSimulation = (sim: any) => {
     setInputs(sim.simulation_inputs);
     setOutcomes(sim.projected_outcomes);
+    if (user) logUserActivity(user.id, "load_past_simulation", "LifeSimulator", `Loaded simulation: ${sim.id}`);
   };
 
   return (

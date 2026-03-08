@@ -2,7 +2,9 @@ import { useState } from "react";
 import { CheckCircle2, Circle, Brain, Loader2, Sparkles } from "lucide-react";
 import { toggleDailyTask } from "@/lib/api";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { logUserActivity } from "@/lib/activityLogger";
 import type { CoachingPlan } from "@/hooks/useDashboardData";
 
 const categoryColors: Record<string, string> = {
@@ -21,6 +23,7 @@ interface Props {
 const CoachingRoadmap = ({ plan, onRefresh }: Props) => {
   const [generating, setGenerating] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const tasks = plan?.daily_tasks?.sort((a, b) => a.day_number - b.day_number) || [];
   const completed = tasks.filter((t) => t.is_completed).length;
@@ -28,6 +31,7 @@ const CoachingRoadmap = ({ plan, onRefresh }: Props) => {
   const handleToggle = async (taskId: string, current: boolean) => {
     try {
       await toggleDailyTask(taskId, !current);
+      if (user) logUserActivity(user.id, "toggle_task", "CoachingRoadmap", `Task ${taskId}: ${!current ? "completed" : "uncompleted"}`);
       onRefresh();
     } catch {
       toast({ title: "Error", description: "Failed to update task", variant: "destructive" });
@@ -41,6 +45,7 @@ const CoachingRoadmap = ({ plan, onRefresh }: Props) => {
         body: { action: "generate-plan" },
       });
       if (error) throw error;
+      if (user) logUserActivity(user.id, "generate_plan", "CoachingRoadmap", "Generated new AI coaching plan");
       toast({ title: "Plan generated!", description: "Your AI coaching plan is ready." });
       onRefresh();
     } catch (err: any) {

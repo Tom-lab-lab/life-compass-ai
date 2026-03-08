@@ -3,6 +3,7 @@ import { Target, Plus, Trash2, Loader2, ChevronDown, ChevronUp, Sliders } from "
 import { createGoal, updateGoal, deleteGoal } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { logUserActivity } from "@/lib/activityLogger";
 import type { Goal } from "@/hooks/useDashboardData";
 
 const categoryBorder: Record<string, string> = {
@@ -68,6 +69,7 @@ const GoalsPanel = ({ goals, onRefresh }: Props) => {
         financial_budget: financialBudget ? parseFloat(financialBudget) : undefined,
         qualitative_notes: qualitativeNotes || undefined,
       });
+      logUserActivity(user.id, "create_goal", "GoalsPanel", `Created goal: ${title.trim()} [${category}]`);
       resetForm();
       setShowAdd(false);
       onRefresh();
@@ -81,6 +83,7 @@ const GoalsPanel = ({ goals, onRefresh }: Props) => {
   const handleDelete = async (id: string) => {
     try {
       await deleteGoal(id);
+      if (user) logUserActivity(user.id, "delete_goal", "GoalsPanel", `Deleted goal: ${id}`);
       onRefresh();
     } catch {
       toast({ title: "Error", description: "Failed to delete goal", variant: "destructive" });

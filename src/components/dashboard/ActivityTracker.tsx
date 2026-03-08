@@ -1,12 +1,21 @@
+import { useEffect } from "react";
 import type { ActivityLog } from "@/hooks/useDashboardData";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, ReferenceLine, Tooltip } from "recharts";
 import { Footprints } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { logUserActivity } from "@/lib/activityLogger";
 
 interface Props {
   logs: ActivityLog[];
 }
 
 const ActivityTracker = ({ logs }: Props) => {
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (user) logUserActivity(user.id, "open_feature", "ActivityTracker", "Viewed step tracking");
+  }, [user?.id]);
+
   if (logs.length === 0) {
     return (
       <div className="rounded-xl border border-border bg-card p-6 animate-slide-up" style={{ animationDelay: "0.25s" }}>
