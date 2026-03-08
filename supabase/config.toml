@@ -8,3 +8,12 @@ verify_jwt = false
 
 [functions.ai-model-health]
 verify_jwt = false
+
+[functions.ai-decision-engine]
+verify_jwt = false
+
+[functions.mcda-engine]
+verify_jwt = false
+
+[functions.log-auth-event]
+verify_jwt = false
