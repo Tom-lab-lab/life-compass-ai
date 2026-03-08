@@ -20,6 +20,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "nav.modelHealth": "Model Health",
     "nav.researchMetrics": "Research Metrics",
     "nav.export": "Research Export",
+    "nav.weeklyFeedback": "Weekly Feedback",
     "nav.signout": "Sign Out",
     "header.hello": "Hello",
     "header.subtitle": "Here's your life at a glance",
