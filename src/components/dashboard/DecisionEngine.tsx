@@ -47,6 +47,7 @@ const DecisionEngine = ({ goals }: Props) => {
       });
       if (error) throw error;
       setResult(data);
+      logUserActivity(user.id, "analyze_goals", "DecisionEngine", `Analyzed ${goals.length} goals`);
     } catch (err: any) {
       toast({ title: "Error", description: err.message || "Failed to analyze", variant: "destructive" });
     } finally {

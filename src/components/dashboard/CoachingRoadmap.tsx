@@ -45,6 +45,7 @@ const CoachingRoadmap = ({ plan, onRefresh }: Props) => {
         body: { action: "generate-plan" },
       });
       if (error) throw error;
+      if (user) logUserActivity(user.id, "generate_plan", "CoachingRoadmap", "Generated new AI coaching plan");
       toast({ title: "Plan generated!", description: "Your AI coaching plan is ready." });
       onRefresh();
     } catch (err: any) {

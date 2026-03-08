@@ -81,6 +81,7 @@ const LifeSimulator = () => {
   const loadPastSimulation = (sim: any) => {
     setInputs(sim.simulation_inputs);
     setOutcomes(sim.projected_outcomes);
+    if (user) logUserActivity(user.id, "load_past_simulation", "LifeSimulator", `Loaded simulation: ${sim.id}`);
   };
 
   return (

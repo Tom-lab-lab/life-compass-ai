@@ -83,6 +83,7 @@ const GoalsPanel = ({ goals, onRefresh }: Props) => {
   const handleDelete = async (id: string) => {
     try {
       await deleteGoal(id);
+      if (user) logUserActivity(user.id, "delete_goal", "GoalsPanel", `Deleted goal: ${id}`);
       onRefresh();
     } catch {
       toast({ title: "Error", description: "Failed to delete goal", variant: "destructive" });

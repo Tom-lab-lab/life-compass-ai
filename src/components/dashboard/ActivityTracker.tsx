@@ -10,6 +10,12 @@ interface Props {
 }
 
 const ActivityTracker = ({ logs }: Props) => {
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (user) logUserActivity(user.id, "open_feature", "ActivityTracker", "Viewed step tracking");
+  }, [user?.id]);
+
   if (logs.length === 0) {
     return (
       <div className="rounded-xl border border-border bg-card p-6 animate-slide-up" style={{ animationDelay: "0.25s" }}>

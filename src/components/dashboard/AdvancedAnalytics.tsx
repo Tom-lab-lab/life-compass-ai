@@ -44,6 +44,11 @@ function getCorrelationLabel(r: number): string {
 
 const AdvancedAnalytics = ({ lifeScores, screenTimeLogs, stepLogs, spendingLogs }: Props) => {
   const { t } = useLocale();
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (user) logUserActivity(user.id, "open_feature", "AdvancedAnalytics", "Viewed correlation analytics");
+  }, [user?.id]);
 
   const charts = useMemo(() => {
     const scoresByDate = new Map(lifeScores.map(s => [s.date, s]));
