@@ -22,7 +22,7 @@ import {
   Users,
   Wand2,
   
-  HeartPulse,
+  
   ClipboardCheck,
   Calculator,
   Beaker,
