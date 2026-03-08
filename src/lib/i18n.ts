@@ -141,6 +141,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "nav.evaluation": "मूल्यांकन",
     "nav.experiment": "प्रयोग",
     "nav.architecture": "वास्तुकला",
+    "nav.checkin": "दैनिक चेक-इन",
     "nav.signout": "लॉग आउट",
     "header.hello": "नमस्ते",
     "header.subtitle": "आपके जीवन की एक झलक",
